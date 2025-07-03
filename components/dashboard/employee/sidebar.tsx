@@ -9,108 +9,114 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { 
   LayoutDashboard,
-  Users,
-  UserPlus,
+  User,
+  Calendar,
   DollarSign,
   TrendingUp,
-  Calendar,
   GraduationCap,
-  BarChart3,
+  Heart,
+  Clock,
+  FileText,
   Settings,
   Bell,
-  FileText,
-  Target,
-  Clock,
+  MessageSquare,
   Shield,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  PlusCircle,
+  Download
 } from "lucide-react"
 
 const navigation = [
   {
     name: "Dashboard",
-    href: "/employer/dashboard",
+    href: "/employee/dashboard",
     icon: LayoutDashboard,
     current: false,
   },
   {
-    name: "Employees",
-    href: "/employer/employees",
-    icon: Users,
+    name: "My Profile",
+    href: "/employee/profile",
+    icon: User,
     current: false,
-    badge: "342",
   },
   {
-    name: "Recruitment",
-    href: "/employer/recruitment",
-    icon: UserPlus,
+    name: "Leave Requests",
+    href: "/employee/leave",
+    icon: Calendar,
     current: false,
-    badge: "12",
-    badgeVariant: "destructive" as const,
+    badge: "2",
+    badgeVariant: "secondary" as const,
   },
   {
     name: "Payroll",
-    href: "/employer/payroll",
+    href: "/employee/payroll",
     icon: DollarSign,
     current: false,
   },
   {
     name: "Performance",
-    href: "/employer/performance",
+    href: "/employee/performance",
     icon: TrendingUp,
     current: false,
-    badge: "3",
-    badgeVariant: "secondary" as const,
-  },
-  {
-    name: "Leave Management",
-    href: "/employer/leave",
-    icon: Calendar,
-    current: false,
-    badge: "8",
+    badge: "1",
+    badgeVariant: "destructive" as const,
   },
   {
     name: "Training",
-    href: "/employer/training",
+    href: "/employee/training",
     icon: GraduationCap,
+    current: false,
+    badge: "3",
+  },
+  {
+    name: "Benefits",
+    href: "/employee/benefits",
+    icon: Heart,
     current: false,
   },
   {
-    name: "Analytics",
-    href: "/employer/analytics",
-    icon: BarChart3,
+    name: "Time Tracking",
+    href: "/employee/time",
+    icon: Clock,
+    current: false,
+  },
+  {
+    name: "Documents",
+    href: "/employee/documents",
+    icon: FileText,
     current: false,
   },
 ]
 
 const quickActions = [
   {
-    name: "Add Employee",
-    href: "/employer/employees/add",
-    icon: Users,
+    name: "Request Leave",
+    href: "/employee/leave/request",
+    icon: Calendar,
     color: "bg-blue-500",
   },
   {
-    name: "Post Job",
-    href: "/employer/recruitment/jobs/create",
-    icon: UserPlus,
+    name: "Submit Timesheet",
+    href: "/employee/time/submit",
+    icon: Clock,
     color: "bg-green-500",
   },
   {
-    name: "Run Payroll",
-    href: "/employer/payroll/runs",
-    icon: DollarSign,
+    name: "Download Pay Stub",
+    href: "/employee/payroll/paystubs",
+    icon: Download,
     color: "bg-yellow-500",
   },
   {
-    name: "Generate Report",
-    href: "/employer/analytics/reports",
-    icon: FileText,
+    name: "Update Profile",
+    href: "/employee/profile/edit",
+    icon: User,
     color: "bg-purple-500",
   },
 ]
 
-export function EmployerSidebar() {
+export function EmployeeSidebar() {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -129,7 +135,7 @@ export function EmployerSidebar() {
               className="h-8 w-8 rounded-lg object-contain"
             />
             <span className="text-xl font-bold">Zentiri HR</span>
-            <Badge variant="secondary" className="text-xs">Pro</Badge>
+            <Badge variant="outline" className="text-xs">Employee</Badge>
           </div>
         )}
         <Button
@@ -188,10 +194,10 @@ export function EmployerSidebar() {
         
         {/* Settings */}
         <Link
-          href="/employer/settings"
+          href="/employee/settings"
           className={cn(
             "group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-muted/50",
-            pathname.startsWith("/employer/settings")
+            pathname.startsWith("/employee/settings")
               ? "bg-primary/10 text-primary border border-primary/20"
               : "text-muted-foreground hover:text-foreground"
           )}
