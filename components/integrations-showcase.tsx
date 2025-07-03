@@ -40,7 +40,7 @@ export function IntegrationsShowcase() {
       ref={containerRef}
       className="relative w-full h-96 overflow-hidden bg-gradient-to-br from-background to-muted/20 rounded-2xl border border-border/50 backdrop-blur-sm"
     >
-      {/* Central HRify Hub */}
+      {/* Central Zentiri HR Hub */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
         <div className="relative">
           {/* Pulsing rings */}
@@ -53,13 +53,17 @@ export function IntegrationsShowcase() {
             className="w-24 h-24 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-2xl border-4 border-background relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-            <Zap className="h-10 w-10 text-primary-foreground relative z-10" />
+            <img 
+              src="/zentiri-logo.png" 
+              alt="Zentiri HR Logo" 
+              className="h-10 w-10 object-contain relative z-10"
+            />
           </div>
         </div>
         
         <div className="text-center mt-3">
           <Badge variant="secondary" className="text-sm font-semibold bg-primary/10 text-primary border-primary/20">
-            HRify Core
+            Zentiri HR Core
           </Badge>
         </div>
       </div>

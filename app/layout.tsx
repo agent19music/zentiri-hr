@@ -11,7 +11,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "HRify - Transform Your HR Operations",
+  title: "Zentiri HR - Transform Your HR Operations",
   description:
     "Streamline hiring, enhance employee experience, and drive organizational growth with our comprehensive HR management platform",
     generator: 'v0.dev'

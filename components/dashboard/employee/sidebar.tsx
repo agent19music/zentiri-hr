@@ -23,7 +23,6 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
-  Zap,
   PlusCircle,
   Download
 } from "lucide-react"
@@ -130,10 +129,12 @@ export function EmployeeSidebar() {
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Zap className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold">HRify</span>
+            <img 
+              src="/zentiri-logo.png" 
+              alt="Zentiri HR Logo" 
+              className="h-8 w-8 rounded-lg object-contain"
+            />
+            <span className="text-xl font-bold">Zentiri HR</span>
             <Badge variant="outline" className="text-xs">Employee</Badge>
           </div>
         )}

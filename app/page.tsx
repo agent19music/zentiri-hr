@@ -9,7 +9,7 @@ import { AnimatedBackground } from "@/components/animated-background"
 import { IntegrationsShowcase } from "@/components/integrations-showcase"
 import { useRouter } from "next/navigation"
 
-export default function HRifyLanding() {
+export default function ZentiriHRLanding() {
   const router = useRouter()
 
   const handleGetStarted = () => {
@@ -24,10 +24,12 @@ export default function HRifyLanding() {
         <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
           <div className="container flex h-16 items-center justify-between px-4 md:px-6">
             <div className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Users className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold">HRify</span>
+              <img 
+                src="/zentiri-logo.png" 
+                alt="Zentiri HR Logo" 
+                className="h-8 w-8 rounded-lg object-contain"
+              />
+              <span className="text-xl font-bold">Zentiri HR</span>
             </div>
 
             <nav className="hidden md:flex items-center space-x-6">
@@ -181,7 +183,7 @@ export default function HRifyLanding() {
           <section id="features" className="py-20 bg-muted/50">
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold mb-4">Why Choose HRify?</h2>
+                <h2 className="text-3xl font-bold mb-4">Why Choose Zentiri HR?</h2>
                 <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic max-w-2xl mx-auto">
                   Everything you need to build a world-class HR department
                 </p>
@@ -353,7 +355,7 @@ export default function HRifyLanding() {
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Trusted by Industry Leaders</h2>
                 <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
-                  Join thousands of companies that trust HRify with their most valuable asset
+                  Join thousands of companies that trust Zentiri HR with their most valuable asset
                 </p>
               </div>
 
@@ -415,7 +417,7 @@ export default function HRifyLanding() {
               <div className="text-center max-w-3xl mx-auto">
                 <h2 className="text-3xl font-bold mb-4">Ready to Transform Your HR?</h2>
                 <p className="text-xl mb-8 font-['Playfair_Display'] italic opacity-90">
-                  Join thousands of companies already using HRify to streamline their HR operations
+                  Join thousands of companies already using Zentiri HR to streamline their HR operations
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" variant="secondary" className="text-base px-8">
@@ -441,10 +443,12 @@ export default function HRifyLanding() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                    <Users className="h-5 w-5 text-primary-foreground" />
-                  </div>
-                  <span className="text-xl font-bold">HRify</span>
+                  <img 
+                    src="/zentiri-logo.png" 
+                    alt="Zentiri HR Logo" 
+                    className="h-8 w-8 rounded-lg object-contain"
+                  />
+                  <span className="text-xl font-bold">Zentiri HR</span>
                 </div>
                 <p className="text-muted-foreground max-w-xs">
                   The complete HR management platform for modern businesses. Streamline, automate, and grow.
@@ -557,7 +561,7 @@ export default function HRifyLanding() {
             </div>
 
             <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-              <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} HRify. All rights reserved.</p>
+              <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Zentiri HR. All rights reserved.</p>
               <div className="flex items-center space-x-4 mt-4 md:mt-0">
                 <Badge variant="secondary" className="text-xs">
                   SOC 2 Compliant
