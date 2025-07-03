@@ -13,7 +13,7 @@ export default function ZentiriHRLanding() {
   const router = useRouter()
 
   const handleGetStarted = () => {
-    router.push("/employer/organization")
+    router.push("/onboarding/organization")
   }
 
   return (
