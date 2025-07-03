@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  output: "standalone",
+  outputFileTracingIncludes: {
+    "/": ["./public/**/*"],
+  },
 }
 
 export default nextConfig

@@ -1,4 +1,4 @@
-import { EmployerSidebar } from "@/components/dashboard/employer/sidebar"
+﻿import { EmployerSidebar } from "@/components/dashboard/employer/sidebar"
 import { EmployerHeader } from "@/components/dashboard/employer/header"
 
 export default function EmployerLayout({

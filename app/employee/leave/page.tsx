@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -267,37 +267,37 @@ export default function EmployeeLeave() {
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Vacation Leave</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• 20 days annually (prorated for new hires)</li>
-                <li>• Accrues at 1.67 days per month</li>
-                <li>• Maximum carryover: 5 days to next year</li>
-                <li>• Minimum 2 weeks notice for requests over 3 days</li>
-                <li>• Manager approval required</li>
+                <li>&bull; 20 days annually (prorated for new hires)</li>
+                <li>&bull; Accrues at 1.67 days per month</li>
+                <li>&bull; Maximum carryover: 5 days to next year</li>
+                <li>&bull; Minimum 2 weeks notice for requests over 3 days</li>
+                <li>&bull; Manager approval required</li>
               </ul>
 
               <h3 className="text-sm font-medium mt-6">Sick Leave</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• 10 days annually</li>
-                <li>• Can be used for personal illness or family care</li>
-                <li>• No advance notice required for emergencies</li>
-                <li>• Medical documentation required for 3+ consecutive days</li>
+                <li>&bull; 10 days annually</li>
+                <li>&bull; Can be used for personal illness or family care</li>
+                <li>&bull; No advance notice required for emergencies</li>
+                <li>&bull; Medical documentation required for 3+ consecutive days</li>
               </ul>
             </div>
 
             <div className="space-y-4">
               <h3 className="text-sm font-medium">Personal Leave</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• 5 days annually</li>
-                <li>• Can be used for personal matters</li>
-                <li>• 24-hour advance notice required</li>
-                <li>• Subject to manager approval</li>
+                <li>&bull; 5 days annually</li>
+                <li>&bull; Can be used for personal matters</li>
+                <li>&bull; 24-hour advance notice required</li>
+                <li>&bull; Subject to manager approval</li>
               </ul>
 
               <h3 className="text-sm font-medium mt-6">Important Notes</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• All leave requests must be submitted through this system</li>
-                <li>• Blackout periods may apply during busy seasons</li>
-                <li>• Contact HR for questions about leave policies</li>
-                <li>• Unused sick leave does not carry over</li>
+                <li>&bull; All leave requests must be submitted through this system</li>
+                <li>&bull; Blackout periods may apply during busy seasons</li>
+                <li>&bull; Contact HR for questions about leave policies</li>
+                <li>&bull; Unused sick leave does not carry over</li>
               </ul>
             </div>
           </div>

@@ -1,13 +1,17 @@
-import type React from "react"
+﻿import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap" 
+})
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+  display: "swap"
 })
 
 export const metadata: Metadata = {
@@ -17,6 +21,13 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
+export function generateViewport() {
+  return {
+    width: 'device-width',
+    initialScale: 1,
+  }
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -24,6 +35,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body className={`${inter.className} ${playfair.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
@@ -32,3 +46,4 @@ export default function RootLayout({
     </html>
   )
 }
+

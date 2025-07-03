@@ -1,3 +1,6 @@
+﻿"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -23,6 +26,18 @@ import {
   PlusCircle,
   Shield
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const personalStats = [
   {
@@ -65,45 +80,45 @@ const personalStats = [
 
 const quickActions = [
   {
+    id: "request-time-off",
     title: "Request Time Off",
     description: "Submit a new leave request",
     icon: Calendar,
-    href: "/employee/leave/request",
     color: "bg-blue-500",
   },
   {
+    id: "view-pay-stubs",
     title: "View Pay Stubs",
     description: "Download recent pay statements",
     icon: Download,
-    href: "/employee/payroll/paystubs",
     color: "bg-green-500",
   },
   {
+    id: "update-profile",
     title: "Update Profile",
     description: "Edit personal information",
     icon: User,
-    href: "/employee/profile/edit",
     color: "bg-purple-500",
   },
   {
+    id: "submit-timesheet",
     title: "Submit Timesheet",
     description: "Log your working hours",
     icon: Clock,
-    href: "/employee/time/submit",
     color: "bg-yellow-500",
   },
   {
+    id: "view-benefits",
     title: "View Benefits",
     description: "Manage health & benefits",
     icon: Heart,
-    href: "/employee/benefits",
     color: "bg-pink-500",
   },
   {
+    id: "book-training",
     title: "Book Training",
     description: "Enroll in courses",
     icon: GraduationCap,
-    href: "/employee/training",
     color: "bg-indigo-500",
   },
 ]
@@ -211,6 +226,26 @@ const announcements = [
 ]
 
 export default function EmployeeDashboard() {
+  const [openDialog, setOpenDialog] = useState<string | null>(null)
+  const [formData, setFormData] = useState<any>({})
+
+  const handleQuickAction = (actionId: string) => {
+    setOpenDialog(actionId)
+    setFormData({})
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(null)
+    setFormData({})
+  }
+
+  const handleSubmit = (actionId: string) => {
+    // Handle form submission based on action
+    console.log(`Submitting ${actionId}:`, formData)
+    handleCloseDialog()
+    // Add success toast here
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -247,7 +282,7 @@ export default function EmployeeDashboard() {
               <div className="text-2xl font-bold">{stat.value}</div>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                 <span>{stat.subtext}</span>
-                <span>•</span>
+                <span>&bull;</span>
                 <span>{stat.description}</span>
               </div>
             </CardContent>
@@ -268,22 +303,20 @@ export default function EmployeeDashboard() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {quickActions.map((action) => (
                 <Button
-                  key={action.title}
+                  key={action.id}
                   variant="outline"
                   className="h-auto p-4 flex flex-col items-start space-y-2 hover:bg-muted/50"
-                  asChild
+                  onClick={() => handleQuickAction(action.id)}
                 >
-                  <a href={action.href}>
-                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${action.color}`}>
-                      <action.icon className="h-4 w-4 text-white" />
+                  <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${action.color}`}>
+                    <action.icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-medium text-sm">{action.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {action.description}
                     </div>
-                    <div className="text-left">
-                      <div className="font-medium text-sm">{action.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {action.description}
-                      </div>
-                    </div>
-                  </a>
+                  </div>
                 </Button>
               ))}
             </div>
@@ -371,7 +404,7 @@ export default function EmployeeDashboard() {
                   <div className="flex-1">
                     <p className="text-sm font-medium">{request.type}</p>
                     <p className="text-sm text-muted-foreground">
-                      {request.dates} • {request.days}
+                      {request.dates} &bull; {request.days}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Submitted: {request.submittedDate}
@@ -556,7 +589,7 @@ export default function EmployeeDashboard() {
                   <p className="text-xs text-muted-foreground">With: Sarah Johnson</p>
                 </div>
                 <div className="p-3 border border-border rounded-lg">
-                  <p className="text-sm font-medium">360° Feedback</p>
+                  <p className="text-sm font-medium">360&deg; Feedback</p>
                   <p className="text-xs text-muted-foreground">Due: Jan 20, 2025</p>
                   <p className="text-xs text-muted-foreground">Peer reviews</p>
                 </div>
@@ -565,6 +598,357 @@ export default function EmployeeDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Quick Action Dialogs */}
+      
+      {/* Request Time Off Dialog */}
+      <Dialog open={openDialog === "request-time-off"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Request Time Off</DialogTitle>
+            <DialogDescription>
+              Submit a new leave request. Please provide all required details.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="leave-type" className="text-right">
+                Type
+              </Label>
+              <Select onValueChange={(value) => setFormData({...formData, type: value})}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select leave type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="vacation">Vacation Leave</SelectItem>
+                  <SelectItem value="sick">Sick Leave</SelectItem>
+                  <SelectItem value="personal">Personal Leave</SelectItem>
+                  <SelectItem value="emergency">Emergency Leave</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="start-date" className="text-right">
+                Start Date
+              </Label>
+              <Input
+                id="start-date"
+                type="date"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="end-date" className="text-right">
+                End Date
+              </Label>
+              <Input
+                id="end-date"
+                type="date"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="reason" className="text-right">
+                Reason
+              </Label>
+              <Textarea
+                id="reason"
+                placeholder="Please provide a brief reason for your leave request..."
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, reason: e.target.value})}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button onClick={() => handleSubmit("request-time-off")}>
+              Submit Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Pay Stubs Dialog */}
+      <Dialog open={openDialog === "view-pay-stubs"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Pay Stubs</DialogTitle>
+            <DialogDescription>
+              View and download your recent pay statements.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {recentPayStubs.map((stub, index) => (
+              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                <div>
+                  <div className="font-medium">{stub.period}</div>
+                  <div className="text-sm text-muted-foreground">
+                    Gross: {stub.gross} &bull; Net: {stub.net}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{stub.date}</div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge variant={stub.status === "Available" ? "default" : "secondary"}>
+                    {stub.status}
+                  </Badge>
+                  <Button size="sm" variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleCloseDialog}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Profile Dialog */}
+      <Dialog open={openDialog === "update-profile"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Update Profile</DialogTitle>
+            <DialogDescription>
+              Edit your personal information and contact details.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="first-name" className="text-right">
+                First Name
+              </Label>
+              <Input
+                id="first-name"
+                defaultValue="Alice"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="last-name" className="text-right">
+                Last Name
+              </Label>
+              <Input
+                id="last-name"
+                defaultValue="Smith"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                defaultValue="alice.smith@company.com"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phone" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                defaultValue="+1 (555) 123-4567"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button onClick={() => handleSubmit("update-profile")}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Submit Timesheet Dialog */}
+      <Dialog open={openDialog === "submit-timesheet"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Submit Timesheet</DialogTitle>
+            <DialogDescription>
+              Log your working hours for the current week.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="week-ending" className="text-right">
+                Week Ending
+              </Label>
+              <Input
+                id="week-ending"
+                type="date"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, weekEnding: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="total-hours" className="text-right">
+                Total Hours
+              </Label>
+              <Input
+                id="total-hours"
+                type="number"
+                placeholder="40"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, totalHours: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="project" className="text-right">
+                Project
+              </Label>
+              <Select onValueChange={(value) => setFormData({...formData, project: value})}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select project" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="project-a">Project Alpha</SelectItem>
+                  <SelectItem value="project-b">Project Beta</SelectItem>
+                  <SelectItem value="project-c">Project Gamma</SelectItem>
+                  <SelectItem value="general">General Tasks</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="notes" className="text-right">
+                Notes
+              </Label>
+              <Textarea
+                id="notes"
+                placeholder="Any additional notes or comments..."
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, notes: e.target.value})}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button onClick={() => handleSubmit("submit-timesheet")}>
+              Submit Timesheet
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Benefits Dialog */}
+      <Dialog open={openDialog === "view-benefits"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Employee Benefits</DialogTitle>
+            <DialogDescription>
+              View your current benefits enrollment and make changes.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="grid gap-4">
+              <h3 className="text-lg font-medium">Health Insurance</h3>
+              <div className="grid gap-3">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <p className="font-medium">Premium Health Plan</p>
+                    <p className="text-sm text-muted-foreground">Family coverage</p>
+                  </div>
+                  <Badge>Active</Badge>
+                </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <p className="font-medium">Dental Plan</p>
+                    <p className="text-sm text-muted-foreground">Individual coverage</p>
+                  </div>
+                  <Badge>Active</Badge>
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-4">
+              <h3 className="text-lg font-medium">Retirement</h3>
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <p className="font-medium">401(k) Plan</p>
+                  <p className="text-sm text-muted-foreground">Contributing 6% with 3% match</p>
+                </div>
+                <Badge>Active</Badge>
+              </div>
+            </div>
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                <p className="text-sm font-medium text-yellow-800">Open Enrollment</p>
+              </div>
+              <p className="text-xs text-yellow-700 mt-1">
+                Make changes to your benefits by December 31st.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Close
+            </Button>
+            <Button onClick={() => handleSubmit("view-benefits")}>
+              Make Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Book Training Dialog */}
+      <Dialog open={openDialog === "book-training"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Book Training</DialogTitle>
+            <DialogDescription>
+              Enroll in available training courses and development programs.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {upcomingTraining.map((training, index) => (
+              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex-1">
+                  <div className="font-medium">{training.title}</div>
+                  <div className="text-sm text-muted-foreground">{training.description}</div>
+                  <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
+                    <span>Due: {training.dueDate}</span>
+                    <span>&bull;</span>
+                    <span>Duration: {training.duration}</span>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge 
+                    className={`${training.statusColor} text-white`}
+                    variant="secondary"
+                  >
+                    {training.status}
+                  </Badge>
+                  <Button size="sm" variant="outline">
+                    Enroll
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleCloseDialog}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

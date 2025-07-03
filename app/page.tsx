@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +13,7 @@ export default function ZentiriHRLanding() {
   const router = useRouter()
 
   const handleGetStarted = () => {
-    router.push("/employer/dashboard")
+    router.push("/employer/organization")
   }
 
   return (
@@ -561,7 +561,7 @@ export default function ZentiriHRLanding() {
             </div>
 
             <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-              <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Zentiri HR. All rights reserved.</p>
+                              <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Zentiri HR. All rights reserved.</p>
               <div className="flex items-center space-x-4 mt-4 md:mt-0">
                 <Badge variant="secondary" className="text-xs">
                   SOC 2 Compliant
@@ -580,3 +580,4 @@ export default function ZentiriHRLanding() {
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useEffect, useRef } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Users, BarChart3, Clock, Award, FileText, DollarSign, MessageSquare, Zap, Database, Shield } from "lucide-react"
@@ -170,3 +170,4 @@ export function IntegrationsShowcase() {
     </div>
   )
 }
+
