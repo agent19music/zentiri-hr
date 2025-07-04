@@ -1,8 +1,12 @@
-﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+﻿"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 import { 
   DollarSign,
   Download,
@@ -13,8 +17,20 @@ import {
   FileText,
   CreditCard,
   Banknote,
-  Receipt
+  Receipt,
+  FileDown,
+  Globe,
+  Building2
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const currentPayPeriod = {
   period: "December 16-31, 2024",
@@ -126,7 +142,62 @@ const ytdSummary = {
   retirement401k: 6120.00
 }
 
+// Kenya Tax Breakdown Data
+const kenyaTaxData = {
+  paye: {
+    monthlyGross: 4250.00,
+    taxablePay: 3650.00, // After deductions
+    bands: [
+      { range: "KSH 0 - 24,000", rate: "10%", tax: 2400.00, annualLimit: 24000 },
+      { range: "KSH 24,001 - 32,333", rate: "25%", tax: 2083.25, annualLimit: 32333 },
+      { range: "KSH 32,334 - 500,000", rate: "30%", tax: 140300.20, annualLimit: 500000 },
+      { range: "KSH 500,001 - 800,000", rate: "32.5%", tax: 97500.00, annualLimit: 800000 },
+      { range: "Above KSH 800,000", rate: "35%", tax: 0, annualLimit: null }
+    ],
+    totalPayeTax: 242283.45,
+    reliefs: {
+      personalRelief: 28800.00, // KSH 2,400 per month
+      insuranceRelief: 5000.00,
+      pensionRelief: 20000.00,
+      totalReliefs: 53800.00
+    },
+    netPayeAfterReliefs: 188483.45
+  },
+  nhif: {
+    monthlyContribution: 1700.00, // Based on salary band
+    annualContribution: 20400.00,
+    salaryBand: "KSH 100,000 and above"
+  },
+  nssf: {
+    monthlyContribution: 2160.00, // 6% of pensionable pay
+    annualContribution: 25920.00,
+    employeeRate: "6%",
+    employerRate: "6%",
+    pensionablePay: 36000.00
+  },
+  housingLevy: {
+    monthlyContribution: 637.50, // 1.5% of gross pay
+    annualContribution: 7650.00,
+    rate: "1.5%"
+  },
+  summary: {
+    grossAnnualPay: 102000.00,
+    totalStatutoryDeductions: 242283.45,
+    netAnnualPay: 59716.55,
+    effectiveTaxRate: "38.7%"
+  }
+}
+
 export default function EmployeePayroll() {
+  const [showTaxDialog, setShowTaxDialog] = useState(false)
+  const [showPayStubDialog, setShowPayStubDialog] = useState(false)
+
+  const handleDownloadPayStub = (period: string) => {
+    console.log(`Downloading pay stub for ${period}`)
+    // Here you would typically trigger a download
+    setShowPayStubDialog(false)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -138,11 +209,11 @@ export default function EmployeePayroll() {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setShowTaxDialog(true)}>
             <FileText className="mr-2 h-4 w-4" />
             Tax Documents
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowPayStubDialog(true)}>
             <Download className="mr-2 h-4 w-4" />
             Latest Pay Stub
           </Button>
@@ -618,6 +689,240 @@ export default function EmployeePayroll() {
           </Card>
         </CardContent>
       </Card>
+
+      {/* Tax Documents Dialog - Kenya Tax Breakdown */}
+      <Dialog open={showTaxDialog} onOpenChange={setShowTaxDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Globe className="h-5 w-5 text-green-600" />
+              <span>Kenya Tax Documents & Breakdown</span>
+            </DialogTitle>
+            <DialogDescription>
+              Comprehensive tax breakdown according to Kenya Revenue Authority (KRA) regulations.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* PAYE Tax Breakdown */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Pay As You Earn (PAYE) Tax</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h4 className="font-medium mb-3">Tax Bands (Annual)</h4>
+                    <div className="space-y-2">
+                      {kenyaTaxData.paye.bands.map((band, index) => (
+                        <div key={index} className="flex justify-between p-2 bg-gray-50 rounded">
+                          <span className="text-sm">{band.range}</span>
+                          <span className="text-sm font-medium">{band.rate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Tax Reliefs</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm">Personal Relief</span>
+                        <span className="text-sm font-medium">KSH {kenyaTaxData.paye.reliefs.personalRelief.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Insurance Relief</span>
+                        <span className="text-sm font-medium">KSH {kenyaTaxData.paye.reliefs.insuranceRelief.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Pension Relief</span>
+                        <span className="text-sm font-medium">KSH {kenyaTaxData.paye.reliefs.pensionRelief.toLocaleString()}</span>
+                      </div>
+                      <Separator />
+                      <div className="flex justify-between font-medium">
+                        <span>Total Reliefs</span>
+                        <span>KSH {kenyaTaxData.paye.reliefs.totalReliefs.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Net PAYE After Reliefs (Annual)</span>
+                    <span className="text-lg font-bold text-blue-600">KSH {kenyaTaxData.paye.netPayeAfterReliefs.toLocaleString()}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Statutory Deductions */}
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">NHIF Contribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-green-600">KSH {kenyaTaxData.nhif.monthlyContribution.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Monthly</div>
+                    <div className="text-sm">Salary Band: {kenyaTaxData.nhif.salaryBand}</div>
+                    <div className="text-sm">Annual: KSH {kenyaTaxData.nhif.annualContribution.toLocaleString()}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">NSSF Contribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-blue-600">KSH {kenyaTaxData.nssf.monthlyContribution.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Monthly (Employee: {kenyaTaxData.nssf.employeeRate})</div>
+                    <div className="text-sm">Pensionable Pay: KSH {kenyaTaxData.nssf.pensionablePay.toLocaleString()}</div>
+                    <div className="text-sm">Annual: KSH {kenyaTaxData.nssf.annualContribution.toLocaleString()}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Housing Levy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-purple-600">KSH {kenyaTaxData.housingLevy.monthlyContribution.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Monthly ({kenyaTaxData.housingLevy.rate})</div>
+                    <div className="text-sm">Rate: {kenyaTaxData.housingLevy.rate} of gross pay</div>
+                    <div className="text-sm">Annual: KSH {kenyaTaxData.housingLevy.annualContribution.toLocaleString()}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Summary */}
+            <Card className="bg-gradient-to-r from-green-50 to-blue-50">
+              <CardHeader>
+                <CardTitle>Annual Tax Summary (KRA Compliance)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span>Gross Annual Pay</span>
+                      <span className="font-medium">KSH {kenyaTaxData.summary.grossAnnualPay.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Total Tax & Statutory Deductions</span>
+                      <span className="font-medium text-red-600">KSH {kenyaTaxData.summary.totalStatutoryDeductions.toLocaleString()}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Net Annual Pay</span>
+                      <span className="text-green-600">KSH {kenyaTaxData.summary.netAnnualPay.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-orange-600">{kenyaTaxData.summary.effectiveTaxRate}</div>
+                      <div className="text-sm text-muted-foreground">Effective Tax Rate</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <Building2 className="h-4 w-4 text-yellow-600" />
+                <span className="text-sm font-medium text-yellow-800">KRA Compliance Notice</span>
+              </div>
+              <p className="text-xs text-yellow-700 mt-1">
+                This breakdown is based on current KRA tax rates and regulations. For official tax documents and PIN certificates, visit KRA iTax portal.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTaxDialog(false)}>
+              Close
+            </Button>
+            <Button onClick={() => {
+              console.log('Downloading Kenya tax report')
+              setShowTaxDialog(false)
+            }}>
+              <FileDown className="mr-2 h-4 w-4" />
+              Download Tax Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pay Stub Download Dialog */}
+      <Dialog open={showPayStubDialog} onOpenChange={setShowPayStubDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Download className="h-5 w-5 text-blue-600" />
+              <span>Download Pay Stub</span>
+            </DialogTitle>
+            <DialogDescription>
+              Select the pay period for which you want to download your pay stub.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Select Pay Period</Label>
+              <Select onValueChange={(value) => handleDownloadPayStub(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose pay period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="current">Current Period (Dec 16-31, 2024)</SelectItem>
+                  <SelectItem value="1month">1 Month Ago (Dec 1-15, 2024)</SelectItem>
+                  <SelectItem value="6months">6 Months Ago (Jun 16-30, 2024)</SelectItem>
+                  <SelectItem value="all">View All Available Periods</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="text-sm text-blue-800">
+                <p className="font-medium mb-1">💡 Quick Access Options:</p>
+                <div className="space-y-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full justify-start text-blue-700 hover:bg-blue-100"
+                    onClick={() => handleDownloadPayStub('1month')}
+                  >
+                    <Download className="mr-2 h-3 w-3" />
+                    Last Month (Dec 1-15, 2024)
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full justify-start text-blue-700 hover:bg-blue-100"
+                    onClick={() => handleDownloadPayStub('6months')}
+                  >
+                    <Download className="mr-2 h-3 w-3" />
+                    6 Months Ago (Jun 16-30, 2024)
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPayStubDialog(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

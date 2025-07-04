@@ -2,7 +2,9 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, BarChart3, Shield, Clock, Award, CheckCircle, ArrowRight, Star } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Users, Calendar, BarChart3, Shield, Clock, Award, CheckCircle, ArrowRight, Star, MapPin } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AnimatedBackground } from "@/components/animated-background"
@@ -416,6 +418,308 @@ export default function ZentiriHRLanding() {
             </div>
           </section>
 
+          {/* Pricing Section */}
+          <section id="pricing" className="py-20 bg-muted/30">
+            <div className="container px-4 md:px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold mb-4">Simple, Transparent Pricing</h2>
+                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
+                  Choose the perfect plan for your organization's needs
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {/* Starter Plan */}
+                <Card className="border-2 hover:border-primary/50 transition-all">
+                  <CardContent className="p-8">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold mb-2">Starter</h3>
+                      <p className="text-muted-foreground mb-6">Perfect for small teams</p>
+                      <div className="mb-8">
+                        <span className="text-4xl font-bold">$9</span>
+                        <span className="text-muted-foreground">/employee/month</span>
+                      </div>
+                      <Button className="w-full mb-6" onClick={handleGetStarted}>
+                        Start Free Trial
+                      </Button>
+                      <ul className="space-y-3 text-left">
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Employee self-service portal
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Basic time tracking
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Leave management
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Basic reporting
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Email support
+                        </li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Professional Plan */}
+                <Card className="border-2 border-primary shadow-lg scale-105">
+                  <div className="bg-primary text-primary-foreground text-center py-2 rounded-t-lg">
+                    <span className="text-sm font-semibold">Most Popular</span>
+                  </div>
+                  <CardContent className="p-8">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold mb-2">Professional</h3>
+                      <p className="text-muted-foreground mb-6">For growing businesses</p>
+                      <div className="mb-8">
+                        <span className="text-4xl font-bold">$19</span>
+                        <span className="text-muted-foreground">/employee/month</span>
+                      </div>
+                      <Button className="w-full mb-6" onClick={handleGetStarted}>
+                        Start Free Trial
+                      </Button>
+                      <ul className="space-y-3 text-left">
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Everything in Starter
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Advanced analytics
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Performance management
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Recruitment tools
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Training management
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Priority support
+                        </li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Enterprise Plan */}
+                <Card className="border-2 hover:border-primary/50 transition-all">
+                  <CardContent className="p-8">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
+                      <p className="text-muted-foreground mb-6">For large organizations</p>
+                      <div className="mb-8">
+                        <span className="text-4xl font-bold">Custom</span>
+                        <span className="text-muted-foreground block text-sm">Contact for pricing</span>
+                      </div>
+                      <Button variant="outline" className="w-full mb-6">
+                        Contact Sales
+                      </Button>
+                      <ul className="space-y-3 text-left">
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Everything in Professional
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Custom integrations
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Advanced security
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          Dedicated support
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          On-premise deployment
+                        </li>
+                        <li className="flex items-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-3" />
+                          SLA guarantee
+                        </li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="text-center mt-12">
+                <p className="text-muted-foreground mb-4">All plans include a 14-day free trial. No credit card required.</p>
+                <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    No setup fees
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    Cancel anytime
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                    24/7 support
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Contact Section */}
+          <section id="contact" className="py-20">
+            <div className="container px-4 md:px-6">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold mb-4">Get in Touch</h2>
+                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
+                  Ready to transform your HR operations? We're here to help.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                {/* Contact Information */}
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-start space-x-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <MapPin className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Location</h4>
+                          <p className="text-muted-foreground">Nairobi, Kenya</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <Users className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Email</h4>
+                          <a href="mailto:info@zentiri.app" className="text-primary hover:underline">
+                            info@zentiri.app
+                          </a>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-4">
+                        <div className="bg-primary/10 p-3 rounded-lg">
+                          <Clock className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">Phone</h4>
+                          <a href="tel:+254745071299" className="text-primary hover:underline">
+                            +254 745 071 299
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold mb-4">Office Hours</h3>
+                    <div className="space-y-2 text-muted-foreground">
+                      <div className="flex justify-between">
+                        <span>Monday - Friday</span>
+                        <span>8:00 AM - 6:00 PM EAT</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Saturday</span>
+                        <span>9:00 AM - 2:00 PM EAT</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Sunday</span>
+                        <span>Closed</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button onClick={handleGetStarted}>
+                        Start Free Trial
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                      <Button variant="outline">
+                        Schedule Demo
+                        <Calendar className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Form */}
+                <Card>
+                  <CardContent className="p-8">
+                    <h3 className="text-2xl font-semibold mb-6">Send us a Message</h3>
+                    <form className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="first-name">First Name</Label>
+                          <Input id="first-name" placeholder="John" />
+                        </div>
+                        <div>
+                          <Label htmlFor="last-name">Last Name</Label>
+                          <Input id="last-name" placeholder="Doe" />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" placeholder="john@company.com" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="company">Company</Label>
+                        <Input id="company" placeholder="Your Company" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="employees">Company Size</Label>
+                        <select className="w-full p-2 border rounded-md">
+                          <option>1-10 employees</option>
+                          <option>11-50 employees</option>
+                          <option>51-200 employees</option>
+                          <option>201-1000 employees</option>
+                          <option>1000+ employees</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="message">Message</Label>
+                        <textarea 
+                          id="message" 
+                          rows={4} 
+                          className="w-full p-2 border rounded-md" 
+                          placeholder="Tell us about your HR needs..."
+                        ></textarea>
+                      </div>
+                      
+                      <Button type="submit" className="w-full">
+                        Send Message
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </section>
+
           {/* CTA Section */}
           <section className="py-20 bg-primary text-primary-foreground">
             <div className="container px-4 md:px-6">
@@ -425,7 +729,7 @@ export default function ZentiriHRLanding() {
                   Join thousands of companies already using Zentiri HR to streamline their HR operations
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" variant="secondary" className="text-base px-8">
+                  <Button size="lg" variant="secondary" className="text-base px-8" onClick={handleGetStarted}>
                     Start Free Trial
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -445,8 +749,8 @@ export default function ZentiriHRLanding() {
         {/* Footer */}
         <footer className="bg-muted/50 py-16">
           <div className="container px-4 md:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+              <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center space-x-2">
                   <img 
                     src="/zentiri-logo.png" 
@@ -458,6 +762,27 @@ export default function ZentiriHRLanding() {
                 <p className="text-muted-foreground max-w-xs">
                   The complete HR management platform for modern businesses. Streamline, automate, and grow.
                 </p>
+                
+                {/* Contact Info */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center space-x-2 text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    <span>Nairobi, Kenya</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-muted-foreground">Email:</span>
+                    <a href="mailto:info@zentiri.app" className="text-primary hover:underline">
+                      info@zentiri.app
+                    </a>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-muted-foreground">Phone:</span>
+                    <a href="tel:+254745071299" className="text-primary hover:underline">
+                      +254 745 071 299
+                    </a>
+                  </div>
+                </div>
+
                 <div className="flex space-x-4">
                   <Button variant="ghost" size="sm">
                     Twitter
@@ -475,108 +800,126 @@ export default function ZentiriHRLanding() {
                 <h3 className="font-semibold mb-4">Product</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
+                    <Link href="#features" className="hover:text-foreground transition-colors">
                       Features
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
+                    <Link href="#pricing" className="hover:text-foreground transition-colors">
                       Pricing
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Integrations
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      API
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Security
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-4">Company</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Blog
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Careers
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Press
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
+                    <Link href="#partners" className="hover:text-foreground transition-colors">
                       Partners
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/onboarding/organization" className="hover:text-foreground transition-colors">
+                      Get Started
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/auth/login" className="hover:text-foreground transition-colors">
+                      Sign In
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-4">Support</h3>
+                <h3 className="font-semibold mb-4">For Employers</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Help Center
+                    <Link href="/employer/dashboard" className="hover:text-foreground transition-colors">
+                      Dashboard
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Contact
+                    <Link href="/employer/employees" className="hover:text-foreground transition-colors">
+                      Employees
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Status
+                    <Link href="/employer/recruitment" className="hover:text-foreground transition-colors">
+                      Recruitment
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Privacy
+                    <Link href="/employer/analytics" className="hover:text-foreground transition-colors">
+                      Analytics
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-foreground transition-colors">
-                      Terms
+                    <Link href="/employer/payroll" className="hover:text-foreground transition-colors">
+                      Payroll
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-4">For Employees</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>
+                    <Link href="/employee/dashboard" className="hover:text-foreground transition-colors">
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/employee/profile" className="hover:text-foreground transition-colors">
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/employee/leave" className="hover:text-foreground transition-colors">
+                      Leave Requests
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/employee/time-tracking" className="hover:text-foreground transition-colors">
+                      Time Tracking
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/employee/payroll" className="hover:text-foreground transition-colors">
+                      Payroll
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                              <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Zentiri HR. All rights reserved.</p>
-              <div className="flex items-center space-x-4 mt-4 md:mt-0">
-                <Badge variant="secondary" className="text-xs">
-                  SOC 2 Compliant
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  GDPR Ready
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  ISO 27001
-                </Badge>
+            <div className="border-t mt-12 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+                  <p className="text-sm text-muted-foreground">
+                    &copy; {new Date().getFullYear()} Zentiri HR. All rights reserved.
+                  </p>
+                  <div className="flex items-center space-x-4 text-sm">
+                    <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                      Contact
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                      Privacy Policy
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                      Terms of Service
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <Badge variant="secondary" className="text-xs">
+                    SOC 2 Compliant
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    GDPR Ready
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    ISO 27001
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>

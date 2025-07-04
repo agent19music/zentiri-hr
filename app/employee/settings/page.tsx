@@ -43,6 +43,9 @@ export default function EmployeeSettings() {
     timezone: "Pacific Standard Time (PST)"
   })
 
+  const [avatarImage, setAvatarImage] = useState<string | null>("/placeholder-user.jpg")
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     pushNotifications: true,
@@ -72,8 +75,44 @@ export default function EmployeeSettings() {
     theme: "system"
   })
 
+  const handleChangeProfilePicture = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+      if (!validTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)')
+        return
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Please select an image smaller than 5MB')
+        return
+      }
+
+      setIsUploadingImage(true)
+      
+      // Create a preview URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatarImage(e.target?.result as string)
+        setIsUploadingImage(false)
+        // In a real app, you would upload the file to your server here
+        console.log('Profile picture updated:', file.name)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveProfilePicture = () => {
+    setAvatarImage(null)
+    console.log('Profile picture removed')
+  }
+
   const handleSaveProfile = () => {
     console.log("Saving profile:", profileData)
+    console.log("Avatar image:", avatarImage)
     // Add success toast
   }
 
@@ -141,18 +180,56 @@ export default function EmployeeSettings() {
               {/* Profile Picture */}
               <div className="flex items-center space-x-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src="/placeholder-user.jpg" />
-                  <AvatarFallback>AS</AvatarFallback>
+                  <AvatarImage src={avatarImage || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xl font-semibold">
+                    {profileData.firstName[0]}{profileData.lastName[0]}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
-                  <Button variant="outline" size="sm">
+                  <input
+                    type="file"
+                    id="profile-picture-upload"
+                    accept="image/*"
+                    onChange={handleChangeProfilePicture}
+                    className="hidden"
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => document.getElementById('profile-picture-upload')?.click()}
+                    disabled={isUploadingImage}
+                  >
                     <Camera className="h-4 w-4 mr-2" />
-                    Change Photo
+                    {isUploadingImage ? 'Uploading...' : 'Change Photo'}
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove
-                  </Button>
+                  {avatarImage && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-destructive hover:text-destructive"
+                      onClick={handleRemoveProfilePicture}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Profile Picture Guidelines */}
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <Eye className="h-4 w-4 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-700">
+                    <p className="font-medium mb-1">Profile Picture Guidelines</p>
+                    <ul className="space-y-1 text-xs">
+                      <li>• Use a clear, professional headshot</li>
+                      <li>• Accepted formats: JPEG, PNG, GIF, WebP</li>
+                      <li>• Maximum file size: 5MB</li>
+                      <li>• Recommended size: 400x400 pixels or larger</li>
+                      <li>• Your photo will be visible to team members</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 

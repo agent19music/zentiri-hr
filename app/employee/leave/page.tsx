@@ -1,7 +1,14 @@
-﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+﻿"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
   Calendar,
   Clock,
@@ -12,8 +19,17 @@ import {
   Sun,
   Heart,
   User,
-  FileText
+  FileText,
+  Send
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 const leaveBalance = [
   {
@@ -130,6 +146,46 @@ const upcomingHolidays = [
 ]
 
 export default function EmployeeLeave() {
+  const [showRequestDialog, setShowRequestDialog] = useState(false)
+  const [requests, setRequests] = useState(leaveRequests)
+
+  const handleSubmitRequest = (requestData: any) => {
+    const newRequest = {
+      id: requests.length + 1,
+      type: requestData.type,
+      startDate: new Date(requestData.startDate).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }),
+      endDate: new Date(requestData.endDate).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }),
+      days: calculateDays(requestData.startDate, requestData.endDate),
+      status: "Waiting Approval",
+      statusColor: "bg-orange-500",
+      submittedDate: new Date().toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+      }),
+      reason: requestData.reason,
+      approver: "Sarah Johnson"
+    }
+    setRequests([newRequest, ...requests])
+    setShowRequestDialog(false)
+  }
+
+  const calculateDays = (startDate: string, endDate: string) => {
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const diffTime = Math.abs(end.getTime() - start.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1
+    return diffDays
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -140,7 +196,7 @@ export default function EmployeeLeave() {
             Manage your time off requests and view your leave balance
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setShowRequestDialog(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Request Time Off
         </Button>
@@ -183,7 +239,7 @@ export default function EmployeeLeave() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {leaveRequests.map((request) => (
+              {requests.map((request) => (
                 <div key={request.id} className="border border-border rounded-lg p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -315,6 +371,102 @@ export default function EmployeeLeave() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Request Time Off Dialog */}
+      <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
+              <span>Request Time Off</span>
+            </DialogTitle>
+            <DialogDescription>
+              Submit a new leave request for approval by your manager.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            const formData = new FormData(e.target as HTMLFormElement)
+            handleSubmitRequest({
+              type: formData.get('leaveType'),
+              startDate: formData.get('startDate'),
+              endDate: formData.get('endDate'),
+              reason: formData.get('reason')
+            })
+          }} className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="leaveType">Leave Type</Label>
+              <Select name="leaveType" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select leave type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Vacation">Vacation Leave</SelectItem>
+                  <SelectItem value="Sick Leave">Sick Leave</SelectItem>
+                  <SelectItem value="Personal">Personal Leave</SelectItem>
+                  <SelectItem value="Comp Time">Comp Time</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input 
+                  id="startDate" 
+                  name="startDate"
+                  type="date" 
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              <div>
+                <Label htmlFor="endDate">End Date</Label>
+                <Input 
+                  id="endDate" 
+                  name="endDate"
+                  type="date" 
+                  required
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="reason">Reason for Leave</Label>
+              <Textarea 
+                id="reason" 
+                name="reason"
+                placeholder="Briefly describe the reason for your time off request..."
+                rows={3}
+                required
+              />
+            </div>
+
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="text-sm text-yellow-800">
+                <p className="font-medium mb-1">📋 Important Reminders:</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Submit requests at least 2 weeks in advance for vacation</li>
+                  <li>• Manager approval is required for all leave requests</li>
+                  <li>• Check your leave balance before submitting</li>
+                </ul>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowRequestDialog(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                <Send className="mr-2 h-4 w-4" />
+                Submit Request
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

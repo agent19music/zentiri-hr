@@ -73,14 +73,7 @@ const navigation = [
     icon: DollarSign,
     current: false,
   },
-  {
-    name: "Performance",
-    href: "/employee/performance",
-    icon: TrendingUp,
-    current: false,
-    badge: "1",
-    badgeVariant: "destructive" as const,
-  },
+
   {
     name: "Career Path",
     href: "/employee/career",
@@ -108,12 +101,7 @@ const navigation = [
     icon: Heart,
     current: false,
   },
-  {
-    name: "Time Tracking",
-    href: "/employee/time",
-    icon: Clock,
-    current: false,
-  },
+
   {
     name: "Documents",
     href: "/employee/documents",
@@ -182,7 +170,7 @@ export function EmployeeSidebar() {
           ) : (
             <ChevronLeft className="h-4 w-4" />
           )}
-        </Button>
+        </Button>  
       </div>
 
       {/* Navigation */}

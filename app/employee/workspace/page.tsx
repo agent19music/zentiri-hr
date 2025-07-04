@@ -46,7 +46,7 @@ const mockSpaces = [
     location: "East Wing",
     amenities: ["Projector", "Whiteboard", "Video Conferencing", "WiFi"],
     rating: 4.8,
-    image: "/placeholder.jpg",
+    image: "/openoffice2.webp",
     description: "Large conference room perfect for team meetings and presentations",
     availability: {
       "9:00": true,
@@ -69,7 +69,7 @@ const mockSpaces = [
     location: "Central Area",
     amenities: ["Whiteboard", "Flexible Seating", "Natural Light", "Plants"],
     rating: 4.9,
-    image: "/placeholder.jpg",
+    image: "/openoffice.avif",
     description: "Open creative space for brainstorming and collaborative work",
     availability: {
       "9:00": true,
