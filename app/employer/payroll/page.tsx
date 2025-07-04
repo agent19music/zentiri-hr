@@ -1,4 +1,7 @@
-﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,10 +21,23 @@ import {
   Eye,
   CreditCard,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  PlayCircle,
+  Shield,
+  FileText
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 const payrollStats = [
   {
@@ -208,6 +224,21 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function PayrollPage() {
+  const [showRunPayrollDialog, setShowRunPayrollDialog] = useState(false)
+  const [includeBonuses, setIncludeBonuses] = useState(true)
+  const [includeDeductions, setIncludeDeductions] = useState(true)
+  const [sendNotifications, setSendNotifications] = useState(true)
+
+  const handleRunPayroll = () => {
+    // Here you would typically handle the payroll processing
+    console.log('Running payroll with options:', {
+      includeBonuses,
+      includeDeductions,
+      sendNotifications
+    })
+    setShowRunPayrollDialog(false)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -223,7 +254,7 @@ export default function PayrollPage() {
             <Download className="mr-2 h-4 w-4" />
             Export Report
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowRunPayrollDialog(true)}>
             <CreditCard className="mr-2 h-4 w-4" />
             Run Payroll
           </Button>
@@ -419,6 +450,101 @@ export default function PayrollPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Run Payroll Dialog */}
+      <Dialog open={showRunPayrollDialog} onOpenChange={setShowRunPayrollDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <PlayCircle className="h-5 w-5 text-green-600" />
+              <span>Run Payroll</span>
+            </DialogTitle>
+            <DialogDescription>
+              Process payroll for all eligible employees. This action will initiate payments and send notifications.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-4 w-4 text-yellow-600" />
+                <span className="text-sm font-medium text-yellow-800">Security Check</span>
+              </div>
+              <p className="text-sm text-yellow-700 mt-1">
+                This will process payments for 328 employees totaling $285,420.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Processing Options</Label>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="bonuses" 
+                  checked={includeBonuses}
+                  onCheckedChange={setIncludeBonuses}
+                />
+                <Label htmlFor="bonuses" className="text-sm">Include bonuses and incentives</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="deductions" 
+                  checked={includeDeductions}
+                  onCheckedChange={setIncludeDeductions}
+                />
+                <Label htmlFor="deductions" className="text-sm">Apply standard deductions (taxes, benefits)</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="notifications" 
+                  checked={sendNotifications}
+                  onCheckedChange={setSendNotifications}
+                />
+                <Label htmlFor="notifications" className="text-sm">Send payment notifications to employees</Label>
+              </div>
+            </div>
+
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="text-sm space-y-1">
+                <div className="flex justify-between">
+                  <span>Base Salaries:</span>
+                  <span className="font-medium">$245,680</span>
+                </div>
+                {includeBonuses && (
+                  <div className="flex justify-between">
+                    <span>Bonuses:</span>
+                    <span className="font-medium">$28,420</span>
+                  </div>
+                )}
+                {includeDeductions && (
+                  <div className="flex justify-between">
+                    <span>Deductions:</span>
+                    <span className="font-medium text-red-600">-$31,680</span>
+                  </div>
+                )}
+                <div className="border-t pt-1 mt-2">
+                  <div className="flex justify-between font-bold">
+                    <span>Total Net Pay:</span>
+                    <span>$285,420</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowRunPayrollDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleRunPayroll} className="bg-green-600 hover:bg-green-700">
+              <PlayCircle className="mr-2 h-4 w-4" />
+              Process Payroll
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

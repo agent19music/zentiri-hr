@@ -1258,16 +1258,42 @@ export default function RecruitmentPage() {
                   </Select>
                 </div>
               </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label htmlFor="salaryMin">Minimum Salary (KES)</Label>
+                  <Input id="salaryMin" type="number" placeholder="e.g. 80000" />
+                </div>
+                <div>
+                  <Label htmlFor="salaryMax">Maximum Salary (KES)</Label>
+                  <Input id="salaryMax" type="number" placeholder="e.g. 120000" />
+                </div>
+              </div>
               <div>
                 <Label htmlFor="description">Job Description</Label>
-                <Textarea id="description" placeholder="Enter job description and requirements" rows={4} />
+                <Textarea 
+                  id="description" 
+                  placeholder="Describe the role responsibilities, qualifications, and requirements..."
+                  rows={4} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="requirements">Key Requirements (one per line)</Label>
+                <Textarea 
+                  id="requirements" 
+                  placeholder="e.g. 5+ years experience&#10;React expertise&#10;TypeScript proficiency"
+                  rows={3} 
+                />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNewJob(false)}>
                 Cancel
               </Button>
-              <Button>
+              <Button onClick={() => {
+                // Here you would typically handle form submission
+                console.log('Creating new job posting...')
+                setShowNewJob(false)
+              }}>
                 <Send className="mr-2 h-4 w-4" />
                 Post Job
               </Button>

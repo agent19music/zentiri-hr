@@ -2,25 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration - use anon key for read operations
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase configuration')
+  throw new Error('Missing Supabase configuration')
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function GET(request: NextRequest) {
   try {
-    // Check if Supabase is configured
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json(
-        { success: false, error: 'Database configuration error' },
-        { status: 500 }
-      )
-    }
-
     const { searchParams } = new URL(request.url)
     const subdomain = searchParams.get('subdomain')
 

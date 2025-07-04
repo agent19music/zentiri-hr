@@ -23,7 +23,9 @@ import {
   Filter,
   Search,
   Eye,
-  Edit
+  Edit,
+  Building2,
+  Target
 } from "lucide-react"
 import {
   Dialog,
@@ -127,6 +129,7 @@ export default function EmployerOvertimePage() {
   const [filterDepartment, setFilterDepartment] = useState("all")
   const [selectedRequest, setSelectedRequest] = useState<any>(null)
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
+  const [createSlotDialogOpen, setCreateSlotDialogOpen] = useState(false)
   const [managerNotes, setManagerNotes] = useState("")
 
   const filteredRequests = mockOvertimeRequests.filter(request => {
@@ -186,7 +189,7 @@ export default function EmployerOvertimePage() {
             Review overtime requests and manage department quotas
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setCreateSlotDialogOpen(true)}>
           <Plus className="h-4 w-4" />
           Create Overtime Slot
         </Button>
@@ -535,6 +538,136 @@ export default function EmployerOvertimePage() {
             >
               <CheckCircle2 className="h-4 w-4" />
               Approve
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Overtime Slot Dialog */}
+      <Dialog open={createSlotDialogOpen} onOpenChange={setCreateSlotDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              <span>Create Overtime Slot</span>
+            </DialogTitle>
+            <DialogDescription>
+              Create an overtime opportunity for employees to apply for additional work hours.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="slotTitle">Overtime Slot Title</Label>
+                <Input id="slotTitle" placeholder="e.g. Weekend Support Coverage" />
+              </div>
+              <div>
+                <Label htmlFor="department">Department</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Engineering">Engineering</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Sales">Sales</SelectItem>
+                    <SelectItem value="Support">Support</SelectItem>
+                    <SelectItem value="all">All Departments</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="slotDate">Date</Label>
+                <Input id="slotDate" type="date" />
+              </div>
+              <div>
+                <Label htmlFor="startTime">Start Time</Label>
+                <Input id="startTime" type="time" />
+              </div>
+              <div>
+                <Label htmlFor="endTime">End Time</Label>
+                <Input id="endTime" type="time" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="maxEmployees">Maximum Employees</Label>
+                <Input id="maxEmployees" type="number" placeholder="5" min="1" max="50" />
+              </div>
+              <div>
+                <Label htmlFor="priority">Priority Level</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High Priority</SelectItem>
+                    <SelectItem value="medium">Medium Priority</SelectItem>
+                    <SelectItem value="low">Low Priority</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="slotDescription">Description & Requirements</Label>
+              <Textarea 
+                id="slotDescription" 
+                placeholder="Describe the overtime work requirements, skills needed, and any special instructions..."
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="compensation">Overtime Rate</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select rate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1.5x">1.5x Regular Rate</SelectItem>
+                    <SelectItem value="2x">2x Regular Rate (Holiday/Weekend)</SelectItem>
+                    <SelectItem value="custom">Custom Rate</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="applicationDeadline">Application Deadline</Label>
+                <Input id="applicationDeadline" type="datetime-local" />
+              </div>
+            </div>
+
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <Building2 className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-800">Slot Summary</span>
+              </div>
+              <div className="text-sm text-blue-700 space-y-1">
+                <p>• Employees will be able to apply for this overtime opportunity</p>
+                <p>• Applications will be reviewed and approved based on availability</p>
+                <p>• Notifications will be sent to eligible employees</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateSlotDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // Here you would typically handle slot creation
+              console.log('Creating overtime slot...')
+              setCreateSlotDialogOpen(false)
+            }}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Slot
             </Button>
           </DialogFooter>
         </DialogContent>

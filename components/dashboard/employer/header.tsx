@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 const notifications = [
   {
@@ -54,6 +55,7 @@ const notifications = [
 
 export function EmployerHeader() {
   const { user, logout } = useAuth()
+  const router = useRouter()
   const unreadCount = notifications.filter(n => n.unread).length
 
   const getInitials = (name: string) => {
@@ -126,7 +128,11 @@ export function EmployerHeader() {
                 ))}
               </div>
               <div className="border-t border-border p-4">
-                <Button variant="ghost" className="w-full text-sm">
+                <Button 
+                  variant="ghost" 
+                  className="w-full text-sm"
+                  onClick={() => router.push('/employer/notifications')}
+                >
                   View all notifications
                 </Button>
               </div>

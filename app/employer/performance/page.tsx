@@ -1,4 +1,7 @@
-﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,10 +21,24 @@ import {
   Calendar,
   Filter,
   Search,
-  FileText
+  FileText,
+  UserCheck,
+  Building2,
+  Clock,
+  CheckCircle
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
 const performanceStats = [
   {
@@ -207,6 +224,8 @@ const getTrendIcon = (trend: string) => {
 }
 
 export default function PerformancePage() {
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false)
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -221,7 +240,7 @@ export default function PerformancePage() {
             <FileText className="mr-2 h-4 w-4" />
             Performance Report
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowScheduleDialog(true)}>
             <Calendar className="mr-2 h-4 w-4" />
             Schedule Review
           </Button>
@@ -522,6 +541,156 @@ export default function PerformancePage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Schedule Performance Review Dialog */}
+      <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <UserCheck className="h-5 w-5 text-blue-600" />
+              <span>Schedule Performance Review</span>
+            </DialogTitle>
+            <DialogDescription>
+              Schedule a performance review session with an employee to discuss their progress and goals.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="reviewEmployee">Select Employee</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employeePerformance.map((employee) => (
+                      <SelectItem key={employee.id} value={employee.id}>
+                        {employee.employee.name} - {employee.employee.department}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="reviewType">Review Type</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select review type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="quarterly">Quarterly Review</SelectItem>
+                    <SelectItem value="annual">Annual Review</SelectItem>
+                    <SelectItem value="mid-year">Mid-Year Review</SelectItem>
+                    <SelectItem value="probation">Probation Review</SelectItem>
+                    <SelectItem value="promotion">Promotion Review</SelectItem>
+                    <SelectItem value="improvement">Performance Improvement</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="reviewDate">Review Date</Label>
+                <Input id="reviewDate" type="date" />
+              </div>
+              <div>
+                <Label htmlFor="reviewTime">Review Time</Label>
+                <Input id="reviewTime" type="time" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 minutes</SelectItem>
+                    <SelectItem value="45">45 minutes</SelectItem>
+                    <SelectItem value="60">1 hour</SelectItem>
+                    <SelectItem value="90">1.5 hours</SelectItem>
+                    <SelectItem value="120">2 hours</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="location">Location/Meeting Link</Label>
+                <Input id="location" placeholder="Conference Room A or Zoom link" />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="reviewAgenda">Review Agenda & Notes</Label>
+              <Textarea 
+                id="reviewAgenda" 
+                placeholder="Outline key topics to discuss:&#10;• Performance goals review&#10;• Achievement highlights&#10;• Areas for improvement&#10;• Career development plans&#10;• Feedback and concerns"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="reviewers">Additional Reviewers</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Include other managers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Just me</SelectItem>
+                    <SelectItem value="hr">HR Representative</SelectItem>
+                    <SelectItem value="peer">Peer Reviewer</SelectItem>
+                    <SelectItem value="senior">Senior Manager</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="priority">Priority Level</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High Priority</SelectItem>
+                    <SelectItem value="medium">Medium Priority</SelectItem>
+                    <SelectItem value="low">Low Priority</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center space-x-2 mb-2">
+                <Building2 className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-800">Review Preparation</span>
+              </div>
+              <div className="text-sm text-green-700 space-y-1">
+                <p>• Employee will receive calendar invitation and preparation materials</p>
+                <p>• Self-assessment form will be sent 1 week before the review</p>
+                <p>• Performance data and goals will be automatically compiled</p>
+                <p>• Reminder notifications will be sent to all participants</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // Here you would typically handle review scheduling
+              console.log('Scheduling performance review...')
+              setShowScheduleDialog(false)
+            }}>
+              <Calendar className="mr-2 h-4 w-4" />
+              Schedule Review
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
