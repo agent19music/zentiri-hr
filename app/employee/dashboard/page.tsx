@@ -24,8 +24,15 @@ import {
   MessageSquare,
   Briefcase,
   PlusCircle,
-  Shield
+  Shield,
+  LogIn,
+  LogOut,
+  Smartphone,
+  Banknote
 } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
+import { DynamicDataService } from "@/lib/dynamic-data"
+import { PDFExportService } from "@/lib/pdf-export"
 import {
   Dialog,
   DialogContent,
@@ -226,10 +233,66 @@ const announcements = [
 ]
 
 export default function EmployeeDashboard() {
+  const { user } = useAuth()
   const [openDialog, setOpenDialog] = useState<string | null>(null)
   const [formData, setFormData] = useState<any>({})
+  const [clockedIn, setClockedIn] = useState(false)
+
+  if (!user) {
+    return <div>Loading...</div>
+  }
+
+  // Get dynamic data for the employee
+  const userStats = DynamicDataService.getUserSpecificStats(user)
+  const greetingMessage = DynamicDataService.getGreetingMessage(user)
+  const quickActionsData = DynamicDataService.getQuickActionsForRole(user)
+
+  // Dynamic personal stats based on user data
+  const dynamicPersonalStats = [
+    {
+      title: "Leave Balance",
+      value: `${userStats.leaveBalance} days`,
+      subtext: `${userStats.pendingLeaveRequests} pending approval`,
+      icon: Calendar,
+      description: "Available vacation days",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      title: "Next Paycheck", 
+      value: userStats.nextPaycheck,
+      subtext: userStats.paycheckDate,
+      icon: DollarSign,
+      description: "Gross salary amount",
+      color: "text-green-600",
+      bgColor: "bg-green-50"
+    },
+    {
+      title: "Performance Score",
+      value: userStats.performanceScore,
+      subtext: userStats.performanceText,
+      icon: TrendingUp,
+      description: "Latest review rating",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
+    },
+    {
+      title: "Training Progress",
+      value: `${userStats.trainingProgress.completed}/${userStats.trainingProgress.total}`,
+      subtext: `${userStats.trainingRemaining} courses remaining`,
+      icon: GraduationCap,
+      description: "Training completion",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50"
+    },
+  ]
 
   const handleQuickAction = (actionId: string) => {
+    if (actionId === 'clock-in-out') {
+      setClockedIn(!clockedIn)
+      // Add toast notification
+      return
+    }
     setOpenDialog(actionId)
     setFormData({})
   }
@@ -246,31 +309,43 @@ export default function EmployeeDashboard() {
     // Add success toast here
   }
 
+  const handleGenerateReport = async () => {
+    try {
+      await PDFExportService.generateEmployeeReport(user)
+    } catch (error) {
+      console.error('Failed to generate report:', error)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back, Alice!</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back, {user.firstName}!</h1>
           <p className="text-muted-foreground">
-            Here's what's happening with your work today.
+            {greetingMessage}
           </p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm">
             <MessageSquare className="mr-2 h-4 w-4" />
-            Contact HR
+            <span className="hidden sm:inline">Contact HR</span>
           </Button>
-          <Button size="sm">
+          <Button size="sm" onClick={() => handleQuickAction('request-leave')}>
             <Calendar className="mr-2 h-4 w-4" />
-            Request Leave
+            <span className="hidden sm:inline">Request Leave</span>
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleGenerateReport}>
+            <Download className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">My Report</span>
           </Button>
         </div>
       </div>
 
       {/* Personal Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {personalStats.map((stat) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {dynamicPersonalStats.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
@@ -290,6 +365,73 @@ export default function EmployeeDashboard() {
         ))}
       </div>
 
+      {/* Mobile Quick Actions - Prominent for key actions */}
+      <div className="lg:hidden">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <CardDescription>Common daily tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              {/* Clock In/Out - Primary action */}
+              <Button 
+                variant={clockedIn ? "destructive" : "default"}
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => handleQuickAction('clock-in-out')}
+              >
+                {clockedIn ? <LogOut className="h-6 w-6" /> : <LogIn className="h-6 w-6" />}
+                <div className="text-center">
+                  <div className="font-medium text-sm">{clockedIn ? 'Clock Out' : 'Clock In'}</div>
+                  <div className="text-xs opacity-90">
+                    {clockedIn ? 'End your workday' : 'Start your workday'}
+                  </div>
+                </div>
+              </Button>
+
+              {/* Apply for Loan - Primary action */}
+              <Button 
+                variant="outline"
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => handleQuickAction('apply-loan')}
+              >
+                <Banknote className="h-6 w-6" />
+                <div className="text-center">
+                  <div className="font-medium text-sm">Apply Loan</div>
+                  <div className="text-xs opacity-75">Emergency funds</div>
+                </div>
+              </Button>
+
+              {/* Request Leave */}
+              <Button 
+                variant="outline"
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => handleQuickAction('request-leave')}
+              >
+                <Calendar className="h-6 w-6" />
+                <div className="text-center">
+                  <div className="font-medium text-sm">Request Leave</div>
+                  <div className="text-xs opacity-75">Time off</div>
+                </div>
+              </Button>
+
+              {/* View Payslip */}
+              <Button 
+                variant="outline"
+                className="h-20 flex flex-col items-center justify-center space-y-2"
+                onClick={() => handleQuickAction('view-payslip')}
+              >
+                <Download className="h-6 w-6" />
+                <div className="text-center">
+                  <div className="font-medium text-sm">View Payslip</div>
+                  <div className="text-xs opacity-75">Download</div>
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Quick Actions */}
         <Card className="lg:col-span-2">
@@ -301,7 +443,7 @@ export default function EmployeeDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {quickActions.map((action) => (
+              {quickActionsData.map((action) => (
                 <Button
                   key={action.id}
                   variant="outline"
@@ -309,7 +451,14 @@ export default function EmployeeDashboard() {
                   onClick={() => handleQuickAction(action.id)}
                 >
                   <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${action.color}`}>
-                    <action.icon className="h-4 w-4 text-white" />
+                    {action.icon === 'Clock' && <Clock className="h-4 w-4 text-white" />}
+                    {action.icon === 'Calendar' && <Calendar className="h-4 w-4 text-white" />}
+                    {action.icon === 'DollarSign' && <DollarSign className="h-4 w-4 text-white" />}
+                    {action.icon === 'Download' && <Download className="h-4 w-4 text-white" />}
+                    {action.icon === 'User' && <User className="h-4 w-4 text-white" />}
+                    {action.icon === 'Heart' && <Heart className="h-4 w-4 text-white" />}
+                    {action.icon === 'Users' && <Users className="h-4 w-4 text-white" />}
+                    {action.icon === 'FileText' && <FileText className="h-4 w-4 text-white" />}
                   </div>
                   <div className="text-left">
                     <div className="font-medium text-sm">{action.title}</div>
@@ -949,6 +1098,107 @@ export default function EmployeeDashboard() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Apply for Loan Dialog */}
+      <Dialog open={openDialog === "apply-loan"} onOpenChange={handleCloseDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Apply for Employee Loan</DialogTitle>
+            <DialogDescription>
+              Submit a request for an emergency or advance loan against your salary.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="loan-type" className="text-right">
+                Loan Type
+              </Label>
+              <Select onValueChange={(value) => setFormData({...formData, loanType: value})}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select loan type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="emergency">Emergency Loan</SelectItem>
+                  <SelectItem value="advance">Salary Advance</SelectItem>
+                  <SelectItem value="educational">Educational Loan</SelectItem>
+                  <SelectItem value="medical">Medical Emergency</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="loan-amount" className="text-right">
+                Amount ($)
+              </Label>
+              <Input
+                id="loan-amount"
+                type="number"
+                placeholder="5000"
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, loanAmount: e.target.value})}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="repayment-period" className="text-right">
+                Repayment Period
+              </Label>
+              <Select onValueChange={(value) => setFormData({...formData, repaymentPeriod: value})}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select repayment period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="3">3 months</SelectItem>
+                  <SelectItem value="6">6 months</SelectItem>
+                  <SelectItem value="12">12 months</SelectItem>
+                  <SelectItem value="24">24 months</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="loan-reason" className="text-right">
+                Reason
+              </Label>
+              <Textarea
+                id="loan-reason"
+                placeholder="Please explain the reason for this loan request..."
+                className="col-span-3"
+                onChange={(e) => setFormData({...formData, loanReason: e.target.value})}
+              />
+            </div>
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-4 w-4 text-blue-600" />
+                <p className="text-sm font-medium text-blue-800">Loan Terms</p>
+              </div>
+              <ul className="text-xs text-blue-700 mt-2 space-y-1">
+                <li>• Interest rate: 3-5% annually</li>
+                <li>• Maximum amount: 50% of monthly salary</li>
+                <li>• Processing time: 2-3 business days</li>
+                <li>• Automatic payroll deduction</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDialog}>
+              Cancel
+            </Button>
+            <Button onClick={() => handleSubmit("apply-loan")}>
+              Submit Application
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Clock Status Display (Mobile) */}
+      {clockedIn && (
+        <div className="fixed bottom-4 right-4 lg:hidden">
+          <Card className="bg-green-500 text-white shadow-lg">
+            <CardContent className="p-3 flex items-center space-x-2">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm font-medium">Clocked In</span>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 } 

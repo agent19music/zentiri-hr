@@ -49,7 +49,12 @@ export default function ZentiriHRLanding() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Button variant="ghost" size="sm" className="hidden md:inline-flex">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="hidden md:inline-flex"
+                onClick={() => router.push("/auth/login")}
+              >
                 Sign In
               </Button>
               <Button size="sm" onClick={handleGetStarted}>Get Started</Button>
