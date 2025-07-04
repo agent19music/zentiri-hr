@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,7 +20,7 @@ interface OnboardingSuccessData {
   dashboardUrl: string
 }
 
-export default function OnboardingSuccess() {
+function OnboardingSuccessContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [successData, setSuccessData] = useState<OnboardingSuccessData | null>(null)
@@ -330,5 +330,20 @@ export default function OnboardingSuccess() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function OnboardingSuccess() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <OnboardingSuccessContent />
+    </Suspense>
   )
 } 
