@@ -131,7 +131,6 @@ export default function EmployeeProfile() {
     console.log("Saving preferences:", preferences)
   }
 
-export default function EmployeeProfile() {
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -856,4 +855,4 @@ export default function EmployeeProfile() {
       </Tabs>
     </div>
   )
-} 
+}     
