@@ -17,7 +17,6 @@ import {
   Heart,
   Clock,
   FileText,
-  Settings,
   Bell,
   MessageSquare,
   Shield,
@@ -38,7 +37,7 @@ const navigation = [
     current: false,
   },
   {
-    name: "My Profile",
+    name: "Profile & Settings",
     href: "/employee/profile",
     icon: User,
     current: false,
@@ -124,8 +123,8 @@ const quickActions = [
     color: "bg-yellow-500",
   },
   {
-    name: "Update Profile",
-    href: "/employee/profile/edit",
+    name: "Profile & Settings",
+    href: "/employee/profile",
     icon: User,
     color: "bg-purple-500",
   },
@@ -206,20 +205,6 @@ export function EmployeeSidebar() {
         })}
         
         <Separator className="my-4" />
-        
-        {/* Settings */}
-        <Link
-          href="/employee/settings"
-          className={cn(
-            "group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-muted/50",
-            pathname.startsWith("/employee/settings")
-              ? "bg-primary/10 text-primary border border-primary/20"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          <Settings className={cn("h-5 w-5 shrink-0", collapsed ? "mr-0" : "mr-3")} />
-          {!collapsed && <span>Settings</span>}
-        </Link>
       </nav>
 
       {/* Quick Actions */}

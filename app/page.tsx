@@ -9,6 +9,8 @@ import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { AnimatedBackground } from "@/components/animated-background"
 import { IntegrationsShowcase } from "@/components/integrations-showcase"
+import { DemoDialog } from "@/components/demo-dialog"
+import { IntegrationsDialog } from "@/components/integrations-dialog"
 import { useRouter } from "next/navigation"
 
 export default function ZentiriHRLanding() {
@@ -79,7 +81,7 @@ export default function ZentiriHRLanding() {
                 <div className="inline-flex items-center justify-center mb-8">
                   <Badge variant="secondary" className="px-4 py-2 text-sm font-semibold bg-primary/10 text-primary border-primary/20 backdrop-blur-sm">
                     <Star className="mr-2 h-4 w-4 fill-current" />
-                    Trusted by 10,000+ companies worldwide
+                    Trusted by 10+ companies countrywide
                     <div className="ml-2 flex space-x-1">
                       <div className="w-1 h-1 bg-primary rounded-full animate-pulse"></div>
                       <div className="w-1 h-1 bg-primary rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
@@ -98,25 +100,27 @@ export default function ZentiriHRLanding() {
                   </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-muted-foreground mb-12 font-['Playfair_Display'] italic max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl md:text-2xl text-muted-foreground mb-12  max-w-3xl mx-auto leading-relaxed">
                   Where human resources meets artificial intelligence, creating seamless experiences that scale with your ambitions
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-                  <Button size="lg" className="text-lg px-10 py-4 bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 group">
-                    Start Free Trial
+                  <Button size="lg" className="text-lg px-10 py-4 bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 group" onClick={handleGetStarted}>
+                    Begin Journey
                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="text-lg px-10 py-4 bg-background/50 backdrop-blur-sm border-border/50 hover:bg-background/80 hover:border-primary/50 transition-all duration-300"
-                  >
-                    Schedule a Demo
-                    <div className="ml-3 w-5 h-5 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </Button>
+                  <DemoDialog>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="text-lg px-10 py-4 bg-background/50 backdrop-blur-sm border-border/50 hover:bg-background/80 hover:border-primary/50 transition-all duration-300"
+                    >
+                      Schedule a Demo
+                      <div className="ml-3 w-5 h-5 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                    </Button>
+                  </DemoDialog>
                 </div>
 
                 {/* Enhanced Stats Section */}
@@ -191,7 +195,7 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Why Choose Zentiri HR?</h2>
-                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground  max-w-2xl mx-auto">
                   Everything you need to build a world-class HR department
                 </p>
               </div>
@@ -361,40 +365,40 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Trusted by Industry Leaders</h2>
-                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
-                  Join thousands of companies that trust Zentiri HR with their most valuable asset
+                <p className="text-xl text-muted-foreground ">
+                  Join dozens of companies that trust Zentiri HR with their most valuable asset
                 </p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-center">
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Microsoft
+                    Uniwell
                   </div>
                 </div>
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Google
+                    Camposocial
                   </div>
                 </div>
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Apple
+                    Nurse Now
                   </div>
                 </div>
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Amazon
+                    Konserve
                   </div>
                 </div>
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Meta
+                    Univora
                   </div>
                 </div>
                 <div className="flex items-center justify-center p-4">
                   <div className="text-2xl font-bold text-muted-foreground hover:text-foreground transition-colors">
-                    Netflix
+                    Vitapharm
                   </div>
                 </div>
               </div>
@@ -406,14 +410,16 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Seamless Integrations</h2>
-                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
+                <p className="text-xl text-muted-foreground ">
                   Connect your entire HR ecosystem in one unified platform
                 </p>
               </div>
               <IntegrationsShowcase />
               <div className="text-center mt-12">
                 <p className="text-muted-foreground mb-6">Connect with 100+ popular HR tools and platforms</p>
-                <Button variant="outline">View All Integrations</Button>
+                <IntegrationsDialog>
+                  <Button variant="outline">View All Integrations</Button>
+                </IntegrationsDialog>
               </div>
             </div>
           </section>
@@ -423,7 +429,7 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Simple, Transparent Pricing</h2>
-                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
+                <p className="text-xl text-muted-foreground ">
                   Choose the perfect plan for your organization's needs
                 </p>
               </div>
@@ -440,7 +446,7 @@ export default function ZentiriHRLanding() {
                         <span className="text-muted-foreground">/employee/month</span>
                       </div>
                       <Button className="w-full mb-6" onClick={handleGetStarted}>
-                        Start Free Trial
+                        Begin Journey
                       </Button>
                       <ul className="space-y-3 text-left">
                         <li className="flex items-center">
@@ -482,7 +488,7 @@ export default function ZentiriHRLanding() {
                         <span className="text-muted-foreground">/employee/month</span>
                       </div>
                       <Button className="w-full mb-6" onClick={handleGetStarted}>
-                        Start Free Trial
+                        Begin Journey
                       </Button>
                       <ul className="space-y-3 text-left">
                         <li className="flex items-center">
@@ -583,7 +589,7 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold mb-4">Get in Touch</h2>
-                <p className="text-xl text-muted-foreground font-['Playfair_Display'] italic">
+                <p className="text-xl text-muted-foreground ">
                   Ready to transform your HR operations? We're here to help.
                 </p>
               </div>
@@ -652,13 +658,15 @@ export default function ZentiriHRLanding() {
                     <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button onClick={handleGetStarted}>
-                        Start Free Trial
+                        Begin Journey
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
-                      <Button variant="outline">
-                        Schedule Demo
-                        <Calendar className="ml-2 h-4 w-4" />
-                      </Button>
+                      <DemoDialog>
+                        <Button variant="outline">
+                          Schedule Demo
+                          <Calendar className="ml-2 h-4 w-4" />
+                        </Button>
+                      </DemoDialog>
                     </div>
                   </div>
                 </div>
@@ -725,21 +733,23 @@ export default function ZentiriHRLanding() {
             <div className="container px-4 md:px-6">
               <div className="text-center max-w-3xl mx-auto">
                 <h2 className="text-3xl font-bold mb-4">Ready to Transform Your HR?</h2>
-                <p className="text-xl mb-8 font-['Playfair_Display'] italic opacity-90">
+                <p className="text-xl mb-8  opacity-90">
                   Join thousands of companies already using Zentiri HR to streamline their HR operations
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" variant="secondary" className="text-base px-8" onClick={handleGetStarted}>
-                    Start Free Trial
+                    Begin Journey
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="text-base px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
-                  >
-                    Schedule Demo
-                  </Button>
+                  <DemoDialog>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="text-base px-8 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary bg-transparent"
+                    >
+                      Schedule Demo
+                    </Button>
+                  </DemoDialog>
                 </div>
               </div>
             </div>
