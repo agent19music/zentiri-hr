@@ -82,13 +82,7 @@ const navigation = [
     badge: "New",
     badgeVariant: "secondary" as const,
   },
-  {
-    name: "Training",
-    href: "/employee/training",
-    icon: GraduationCap,
-    current: false,
-    badge: "3",
-  },
+
   {
     name: "Policy Library",
     href: "/employee/policies",

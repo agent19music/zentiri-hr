@@ -90,7 +90,7 @@ export default function ZentiriHRLanding() {
 
                 <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl mb-8">
                   <span className="block">Transform Your</span>
-                  <span className="block bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+                  <span className="block bg-gradient-to-r from-primary via-muted-foreground to-foreground bg-clip-text text-transparent animate-pulse">
                     HR Operations
                   </span>
                   <span className="block text-3xl sm:text-4xl lg:text-5xl xl:text-6xl mt-4 text-muted-foreground font-normal">
@@ -103,7 +103,7 @@ export default function ZentiriHRLanding() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-                  <Button size="lg" className="text-lg px-10 py-4 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <Button size="lg" className="text-lg px-10 py-4 bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 group">
                     Start Free Trial
                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -112,7 +112,7 @@ export default function ZentiriHRLanding() {
                     size="lg" 
                     className="text-lg px-10 py-4 bg-background/50 backdrop-blur-sm border-border/50 hover:bg-background/80 hover:border-primary/50 transition-all duration-300"
                   >
-                    Watch Demo
+                    Schedule a Demo
                     <div className="ml-3 w-5 h-5 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full"></div>
                     </div>

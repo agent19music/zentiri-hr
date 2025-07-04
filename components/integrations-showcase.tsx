@@ -16,14 +16,14 @@ const integrations = [
 ]
 
 const connections = [
-  { from: 0, to: 1, color: "#3B82F6", delay: 0 },      // Slack to Workday
-  { from: 1, to: 2, color: "#10B981", delay: 0.5 },    // Workday to BambooHR
-  { from: 2, to: 3, color: "#F59E0B", delay: 1 },      // BambooHR to ADP
-  { from: 4, to: 5, color: "#8B5CF6", delay: 1.5 },    // Greenhouse to Salesforce
-  { from: 5, to: 6, color: "#EF4444", delay: 2 },      // Salesforce to Lattice
-  { from: 6, to: 7, color: "#06B6D4", delay: 2.5 },    // Lattice to Okta
-  { from: 7, to: 0, color: "#F97316", delay: 3 },      // Okta to Slack
-  { from: 3, to: 4, color: "#84CC16", delay: 3.5 },    // ADP to Greenhouse
+  { from: 0, to: 1, color: "#000000", delay: 0 },      // Slack to Workday
+  { from: 1, to: 2, color: "#000000", delay: 0.5 },    // Workday to BambooHR
+  { from: 2, to: 3, color: "#000000", delay: 1 },      // BambooHR to ADP
+  { from: 4, to: 5, color: "#000000", delay: 1.5 },    // Greenhouse to Salesforce
+  { from: 5, to: 6, color: "#000000", delay: 2 },      // Salesforce to Lattice
+  { from: 6, to: 7, color: "#000000", delay: 2.5 },    // Lattice to Okta
+  { from: 7, to: 0, color: "#000000", delay: 3 },      // Okta to Slack
+  { from: 3, to: 4, color: "#000000", delay: 3.5 },    // ADP to Greenhouse
 ]
 
 export function IntegrationsShowcase() {
@@ -91,8 +91,8 @@ export function IntegrationsShowcase() {
           containerRef={containerRef}
           fromRef={hubRef}
           toRef={{ current: integrationRefs.current[index] }}
-          gradientStartColor="#6366F1"
-          gradientStopColor="#EC4899"
+          gradientStartColor="#000000"
+          gradientStopColor="#666666"
           duration={3}
           delay={index * 0.2}
           curvature={-30}
