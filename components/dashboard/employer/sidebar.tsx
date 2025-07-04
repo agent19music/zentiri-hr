@@ -36,7 +36,8 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  Building2
 } from "lucide-react"
 
 const navigation = [
@@ -62,6 +63,14 @@ const navigation = [
     badgeVariant: "destructive" as const,
   },
   {
+    name: "Workspace",
+    href: "/employer/workspace",
+    icon: Building2,
+    current: false,
+    badge: "New",
+    badgeVariant: "secondary" as const,
+  },
+  {
     name: "Payroll",
     href: "/employer/payroll",
     icon: DollarSign,
@@ -81,6 +90,14 @@ const navigation = [
     icon: Calendar,
     current: false,
     badge: "8",
+  },
+  {
+    name: "Overtime",
+    href: "/employer/overtime",
+    icon: Clock,
+    current: false,
+    badge: "5",
+    badgeVariant: "destructive" as const,
   },
   {
     name: "Training",

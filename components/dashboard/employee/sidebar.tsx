@@ -24,7 +24,10 @@ import {
   ChevronLeft,
   ChevronRight,
   PlusCircle,
-  Download
+  Download,
+  Building2,
+  BookOpen,
+  Target
 } from "lucide-react"
 
 const navigation = [
@@ -41,11 +44,27 @@ const navigation = [
     current: false,
   },
   {
+    name: "Workspace",
+    href: "/employee/workspace",
+    icon: Building2,
+    current: false,
+    badge: "Book",
+    badgeVariant: "secondary" as const,
+  },
+  {
     name: "Leave Requests",
     href: "/employee/leave",
     icon: Calendar,
     current: false,
     badge: "2",
+    badgeVariant: "secondary" as const,
+  },
+  {
+    name: "Overtime",
+    href: "/employee/overtime",
+    icon: Clock,
+    current: false,
+    badge: "New",
     badgeVariant: "secondary" as const,
   },
   {
@@ -63,11 +82,25 @@ const navigation = [
     badgeVariant: "destructive" as const,
   },
   {
+    name: "Career Path",
+    href: "/employee/career",
+    icon: Target,
+    current: false,
+    badge: "New",
+    badgeVariant: "secondary" as const,
+  },
+  {
     name: "Training",
     href: "/employee/training",
     icon: GraduationCap,
     current: false,
     badge: "3",
+  },
+  {
+    name: "Policy Library",
+    href: "/employee/policies",
+    icon: BookOpen,
+    current: false,
   },
   {
     name: "Benefits",

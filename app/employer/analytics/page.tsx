@@ -44,12 +44,12 @@ const analyticsOverview = [
     description: "Company productivity average",
   },
   {
-    title: "Training ROI",
-    value: "340%",
-    change: "+15% improvement",
+    title: "Turnover Rate",
+    value: "6%",
+    change: "3% below industry avg",
     changeType: "increase" as const,
-    icon: GraduationCap,
-    description: "Return on training investment",
+    icon: AlertTriangle,
+    description: "Annual turnover rate",
   },
   {
     title: "Retention Rate",
@@ -129,6 +129,151 @@ const activityHeatmap = [
   { day: "Fri", hour: "16", value: 65 },
 ]
 
+// Turnover analysis data
+const turnoverData = [
+  { 
+    department: "Engineering", 
+    turnoverRate: 4.2, 
+    exitReasons: [
+      { reason: "Career Growth", count: 2 },
+      { reason: "Compensation", count: 1 },
+      { reason: "Work-life Balance", count: 1 }
+    ],
+    averageTenure: "2.8 years",
+    exitCost: 125000
+  },
+  { 
+    department: "Sales", 
+    turnoverRate: 8.1, 
+    exitReasons: [
+      { reason: "Better Opportunity", count: 3 },
+      { reason: "Territory Changes", count: 2 },
+      { reason: "Commission Structure", count: 1 }
+    ],
+    averageTenure: "1.9 years",
+    exitCost: 87000
+  },
+  { 
+    department: "Marketing", 
+    turnoverRate: 5.7, 
+    exitReasons: [
+      { reason: "Career Growth", count: 2 },
+      { reason: "Company Culture", count: 1 }
+    ],
+    averageTenure: "2.3 years",
+    exitCost: 96000
+  },
+  { 
+    department: "Product", 
+    turnoverRate: 3.1, 
+    exitReasons: [
+      { reason: "Relocation", count: 1 }
+    ],
+    averageTenure: "3.2 years",
+    exitCost: 145000
+  }
+]
+
+// Strategic workforce planning data
+const workforceScenarios = [
+  {
+    name: "Conservative Growth",
+    headcountChange: "+15%",
+    timeline: "12 months",
+    budgetImpact: "+$2.8M",
+    departments: [
+      { name: "Engineering", current: 45, target: 52, priority: "high" },
+      { name: "Sales", current: 32, target: 36, priority: "medium" },
+      { name: "Marketing", current: 24, target: 26, priority: "low" },
+      { name: "Product", current: 18, target: 21, priority: "high" }
+    ],
+    riskFactors: ["Skills shortage", "Competition for talent"],
+    expectedROI: "145%"
+  },
+  {
+    name: "Aggressive Expansion",
+    headcountChange: "+35%",
+    timeline: "18 months",
+    budgetImpact: "+$6.2M",
+    departments: [
+      { name: "Engineering", current: 45, target: 65, priority: "high" },
+      { name: "Sales", current: 32, target: 48, priority: "high" },
+      { name: "Marketing", current: 24, target: 35, priority: "medium" },
+      { name: "Product", current: 18, target: 28, priority: "high" }
+    ],
+    riskFactors: ["Market uncertainty", "Rapid scaling challenges", "Cultural dilution"],
+    expectedROI: "180%"
+  },
+  {
+    name: "Optimization Focus",
+    headcountChange: "+5%",
+    timeline: "6 months",
+    budgetImpact: "+$1.1M",
+    departments: [
+      { name: "Engineering", current: 45, target: 47, priority: "medium" },
+      { name: "Sales", current: 32, target: 34, priority: "low" },
+      { name: "Marketing", current: 24, target: 24, priority: "low" },
+      { name: "Product", current: 18, target: 19, priority: "high" }
+    ],
+    riskFactors: ["Limited growth potential"],
+    expectedROI: "125%"
+  }
+]
+
+// Audit trail data
+const auditTrail = [
+  {
+    timestamp: "2024-01-15 09:23:15",
+    user: "Sarah Chen",
+    role: "HR Manager",
+    action: "Viewed Employee Profile",
+    resource: "James Mukiri (EMP-001)",
+    ipAddress: "192.168.1.45",
+    location: "Nairobi, Kenya",
+    riskLevel: "low"
+  },
+  {
+    timestamp: "2024-01-15 09:18:42",
+    user: "David Wilson",
+    role: "Department Manager",
+    action: "Updated Salary Information",
+    resource: "Grace Wanjiku (EMP-015)",
+    ipAddress: "192.168.1.67",
+    location: "Nairobi, Kenya",
+    riskLevel: "medium"
+  },
+  {
+    timestamp: "2024-01-15 08:45:33",
+    user: "Michael Torres",
+    role: "Team Lead",
+    action: "Downloaded Payroll Report",
+    resource: "Sales Department Payroll",
+    ipAddress: "192.168.1.23",
+    location: "Mombasa, Kenya",
+    riskLevel: "high"
+  },
+  {
+    timestamp: "2024-01-15 08:32:17",
+    user: "Lisa Wang",
+    role: "Manager",
+    action: "Accessed Performance Reviews",
+    resource: "Q4 2023 Reviews",
+    ipAddress: "192.168.1.89",
+    location: "Kisumu, Kenya",
+    riskLevel: "medium"
+  },
+  {
+    timestamp: "2024-01-15 08:15:28",
+    user: "John Admin",
+    role: "System Admin",
+    action: "Modified User Permissions",
+    resource: "Employee Access Rights",
+    ipAddress: "192.168.1.1",
+    location: "Nairobi, Kenya",
+    riskLevel: "high"
+  }
+]
+
 const getHeatmapColor = (value: number) => {
   if (value >= 90) return "bg-green-500"
   if (value >= 80) return "bg-green-400"
@@ -145,6 +290,38 @@ const getDepartmentTrendIcon = (trend: string) => {
       return <TrendingDown className="h-4 w-4 text-red-500" />
     default:
       return <Activity className="h-4 w-4 text-gray-500" />
+  }
+}
+
+const getTurnoverColor = (rate: number) => {
+  if (rate <= 5) return "text-green-600"
+  if (rate <= 10) return "text-yellow-600"
+  return "text-red-600"
+}
+
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case "high":
+      return "bg-red-100 text-red-800"
+    case "medium":
+      return "bg-yellow-100 text-yellow-800"
+    case "low":
+      return "bg-green-100 text-green-800"
+    default:
+      return "bg-gray-100 text-gray-800"
+  }
+}
+
+const getRiskLevelColor = (level: string) => {
+  switch (level) {
+    case "high":
+      return "bg-red-100 text-red-800"
+    case "medium":
+      return "bg-yellow-100 text-yellow-800"
+    case "low":
+      return "bg-green-100 text-green-800"
+    default:
+      return "bg-gray-100 text-gray-800"
   }
 }
 
@@ -216,6 +393,9 @@ export default function AnalyticsPage() {
           <TabsTrigger value="payroll">Payroll Insights</TabsTrigger>
           <TabsTrigger value="leave">Leave Patterns</TabsTrigger>
           <TabsTrigger value="training">Training Analytics</TabsTrigger>
+          <TabsTrigger value="turnover">Turnover Analysis</TabsTrigger>
+          <TabsTrigger value="workforce">Workforce Planning</TabsTrigger>
+          <TabsTrigger value="audit">Audit Trail</TabsTrigger>
           <TabsTrigger value="heatmap">Activity Heatmap</TabsTrigger>
         </TabsList>
 
@@ -430,6 +610,278 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="turnover" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Turnover Rate by Department</CardTitle>
+                <CardDescription>Annual turnover analysis and exit reasons</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {turnoverData.map((dept) => (
+                    <div key={dept.department} className="p-4 border rounded-lg space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{dept.department}</span>
+                        <span className={`font-bold ${getTurnoverColor(dept.turnoverRate)}`}>
+                          {dept.turnoverRate}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Avg Tenure: {dept.averageTenure} • Exit Cost: ${dept.exitCost.toLocaleString()}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs font-medium text-muted-foreground">Top Exit Reasons:</div>
+                        {dept.exitReasons.slice(0, 2).map((reason, idx) => (
+                          <div key={idx} className="text-xs flex justify-between">
+                            <span>{reason.reason}</span>
+                            <span>{reason.count} employees</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Turnover Impact Analysis</CardTitle>
+                <CardDescription>Cost and trend analysis</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="p-4 bg-red-50 rounded-lg">
+                    <div className="text-sm font-medium text-red-800">Total Annual Cost</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      ${turnoverData.reduce((sum, dept) => sum + dept.exitCost, 0).toLocaleString()}
+                    </div>
+                    <div className="text-xs text-red-600">
+                      Average cost per exit: ${Math.round(turnoverData.reduce((sum, dept) => sum + dept.exitCost, 0) / turnoverData.length).toLocaleString()}
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="text-sm font-medium text-blue-800">Company Average</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {(turnoverData.reduce((sum, dept) => sum + dept.turnoverRate, 0) / turnoverData.length).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-blue-600">Industry benchmark: 8.5%</div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">Retention Initiatives</div>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex justify-between">
+                        <span>Career Development Programs</span>
+                        <Badge variant="outline" className="text-green-600">Active</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Flexible Work Arrangements</span>
+                        <Badge variant="outline" className="text-green-600">Active</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Compensation Review</span>
+                        <Badge variant="outline" className="text-yellow-600">Pending</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="workforce" className="space-y-4">
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Strategic Workforce Planning</CardTitle>
+                <CardDescription>AI-powered headcount scenarios for different growth strategies</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-6 lg:grid-cols-3">
+                  {workforceScenarios.map((scenario) => (
+                    <div key={scenario.name} className="border rounded-lg p-4 space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-lg">{scenario.name}</h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Headcount:</span>
+                            <span className="ml-1 font-medium">{scenario.headcountChange}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Timeline:</span>
+                            <span className="ml-1 font-medium">{scenario.timeline}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Budget:</span>
+                            <span className="ml-1 font-medium">{scenario.budgetImpact}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">ROI:</span>
+                            <span className="ml-1 font-medium text-green-600">{scenario.expectedROI}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="text-sm font-medium">Department Changes</div>
+                        {scenario.departments.map((dept) => (
+                          <div key={dept.name} className="flex justify-between items-center text-sm">
+                            <span>{dept.name}</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-muted-foreground">
+                                {dept.current} → {dept.target}
+                              </span>
+                              <Badge className={getPriorityColor(dept.priority)}>
+                                {dept.priority}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="text-sm font-medium">Risk Factors</div>
+                        <div className="space-y-1">
+                          {scenario.riskFactors.map((risk, idx) => (
+                            <div key={idx} className="text-xs text-red-600 flex items-center">
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              {risk}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Button className="w-full" variant="outline">
+                        <Target className="mr-2 h-4 w-4" />
+                        Select Scenario
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Productivity Analysis</CardTitle>
+                <CardDescription>AI insights for workforce optimization</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="p-4 border rounded-lg text-center">
+                    <Zap className="h-8 w-8 mx-auto text-yellow-500 mb-2" />
+                    <div className="text-2xl font-bold">127%</div>
+                    <div className="text-sm text-muted-foreground">Productivity vs Industry</div>
+                  </div>
+                  <div className="p-4 border rounded-lg text-center">
+                    <Target className="h-8 w-8 mx-auto text-blue-500 mb-2" />
+                    <div className="text-2xl font-bold">8.4/10</div>
+                    <div className="text-sm text-muted-foreground">Efficiency Score</div>
+                  </div>
+                  <div className="p-4 border rounded-lg text-center">
+                    <TrendingUp className="h-8 w-8 mx-auto text-green-500 mb-2" />
+                    <div className="text-2xl font-bold">+15%</div>
+                    <div className="text-sm text-muted-foreground">YoY Growth Potential</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>System Audit Trail</CardTitle>
+              <CardDescription>Track database access and sensitive operations</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <Button variant="outline" size="sm">
+                    <Filter className="mr-2 h-4 w-4" />
+                    Filter by Risk
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export Audit Log
+                  </Button>
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span>High Risk</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <span>Medium Risk</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>Low Risk</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {auditTrail.map((entry, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            entry.riskLevel === 'high' ? 'bg-red-500' : 
+                            entry.riskLevel === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                          }`}></div>
+                          <Badge className={getRiskLevelColor(entry.riskLevel)}>
+                            {entry.riskLevel}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="font-medium text-sm">{entry.action}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {entry.user} ({entry.role}) • {entry.resource}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <div className="text-xs text-muted-foreground">{entry.timestamp}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {entry.location} • {entry.ipAddress}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3 pt-4">
+                  <div className="p-4 bg-red-50 rounded-lg">
+                    <div className="text-sm font-medium text-red-800">High Risk Actions</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {auditTrail.filter(entry => entry.riskLevel === 'high').length}
+                    </div>
+                    <div className="text-xs text-red-600">Last 24 hours</div>
+                  </div>
+                  <div className="p-4 bg-yellow-50 rounded-lg">
+                    <div className="text-sm font-medium text-yellow-800">Medium Risk Actions</div>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {auditTrail.filter(entry => entry.riskLevel === 'medium').length}
+                    </div>
+                    <div className="text-xs text-yellow-600">Last 24 hours</div>
+                  </div>
+                  <div className="p-4 bg-green-50 rounded-lg">
+                    <div className="text-sm font-medium text-green-800">Total Actions</div>
+                    <div className="text-2xl font-bold text-green-600">{auditTrail.length}</div>
+                    <div className="text-xs text-green-600">Last 24 hours</div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -429,6 +429,195 @@ export default function EmployeePayroll() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Interactive Payslip Breakdown */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Interactive Payslip Breakdown</CardTitle>
+          <CardDescription>
+            Detailed analysis of your salary breakdown with interactive components
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Enhanced Deductions Breakdown */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Detailed Deductions Analysis</h3>
+              <div className="grid gap-3">
+                {deductions.map((deduction) => (
+                  <Card key={deduction.category} className="hover:shadow-sm transition-shadow cursor-pointer border-l-4" style={{borderLeftColor: deduction.color.replace('bg-', '').replace('-500', '')}}>
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-4 h-4 rounded-full ${deduction.color}`}></div>
+                          <span className="font-medium">{deduction.category}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold">${deduction.amount.toFixed(2)}</div>
+                          <div className="text-xs text-muted-foreground">{deduction.percentage}%</div>
+                        </div>
+                      </div>
+                      <Progress value={deduction.percentage} className="h-2 mb-2" />
+                      <div className="text-xs text-muted-foreground">
+                        {deduction.category === "Federal Tax" && "Progressive tax based on income brackets"}
+                        {deduction.category === "State Tax" && "State-specific tax rate"}
+                        {deduction.category === "Social Security" && "6.2% up to annual limit"}
+                        {deduction.category === "Medicare" && "1.45% with additional 0.9% over $200k"}
+                        {deduction.category === "Health Insurance" && "Monthly premium for your selected plan"}
+                        {deduction.category === "401k Contribution" && "Your contribution: 6% of gross pay"}
+                        {deduction.category === "Dental Insurance" && "Monthly dental coverage premium"}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Visual Analysis */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">Financial Breakdown</h3>
+              
+              {/* Take-home vs Deductions */}
+              <Card className="bg-gradient-to-r from-green-50 to-blue-50">
+                <CardContent className="pt-6">
+                  <div className="text-center space-y-2">
+                    <h4 className="font-semibold">Your Take-Home Pay</h4>
+                    <div className="text-3xl font-bold text-green-600">
+                      ${currentPayPeriod.netPay.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {((currentPayPeriod.netPay / currentPayPeriod.grossPay) * 100).toFixed(1)}% of gross pay
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Biggest Deductions */}
+              <Card>
+                <CardContent className="pt-4">
+                  <h4 className="font-medium mb-3">Largest Deductions</h4>
+                  <div className="space-y-2">
+                    {deductions
+                      .sort((a, b) => b.amount - a.amount)
+                      .slice(0, 3)
+                      .map((deduction, idx) => (
+                        <div key={deduction.category} className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</span>
+                            <span className="text-sm">{deduction.category}</span>
+                          </div>
+                          <span className="font-medium">${deduction.amount.toFixed(2)}</span>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tax Summary */}
+              <Card className="bg-red-50">
+                <CardContent className="pt-4">
+                  <h4 className="font-medium mb-3">Tax Summary</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Total Taxes:</span>
+                      <span className="font-medium">
+                        ${(deductions.find(d => d.category === "Federal Tax")?.amount || 0) + 
+                           (deductions.find(d => d.category === "State Tax")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Social Security")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Medicare")?.amount || 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Effective Tax Rate:</span>
+                      <span className="font-medium">
+                        {(((deductions.find(d => d.category === "Federal Tax")?.amount || 0) + 
+                           (deductions.find(d => d.category === "State Tax")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Social Security")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Medicare")?.amount || 0)) / 
+                           currentPayPeriod.grossPay * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Benefits Summary */}
+              <Card className="bg-blue-50">
+                <CardContent className="pt-4">
+                  <h4 className="font-medium mb-3">Benefits Value</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Health Benefits:</span>
+                      <span className="font-medium">
+                        ${((deductions.find(d => d.category === "Health Insurance")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Dental Insurance")?.amount || 0)).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Retirement Contribution:</span>
+                      <span className="font-medium">
+                        ${deductions.find(d => d.category === "401k Contribution")?.amount || 0}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-medium border-t pt-2">
+                      <span>Total Benefits:</span>
+                      <span className="text-blue-600">
+                        ${((deductions.find(d => d.category === "Health Insurance")?.amount || 0) + 
+                           (deductions.find(d => d.category === "Dental Insurance")?.amount || 0) + 
+                           (deductions.find(d => d.category === "401k Contribution")?.amount || 0)).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Interactive Comparison Tool */}
+          <Card className="mt-6">
+            <CardContent className="pt-6">
+              <h4 className="font-semibold mb-4">What If Analysis</h4>
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card className="border-green-200">
+                  <CardContent className="pt-4 text-center">
+                    <h5 className="font-medium text-green-700">If you contributed 8% to 401k</h5>
+                    <div className="mt-2">
+                      <div className="text-lg font-bold text-green-600">
+                        +${((currentPayPeriod.grossPay * 0.02) - (currentPayPeriod.grossPay * 0.02 * 0.22)).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Additional monthly savings</div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-blue-200">
+                  <CardContent className="pt-4 text-center">
+                    <h5 className="font-medium text-blue-700">With High Deductible Plan</h5>
+                    <div className="mt-2">
+                      <div className="text-lg font-bold text-blue-600">
+                        +${((deductions.find(d => d.category === "Health Insurance")?.amount || 0) * 0.4).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Monthly savings</div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-purple-200">
+                  <CardContent className="pt-4 text-center">
+                    <h5 className="font-medium text-purple-700">Next Salary Increase</h5>
+                    <div className="mt-2">
+                      <div className="text-lg font-bold text-purple-600">
+                        +${((currentPayPeriod.grossPay * 0.05) * 0.78).toFixed(2)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">5% raise net impact</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </CardContent>
+      </Card>
     </div>
   )
 } 

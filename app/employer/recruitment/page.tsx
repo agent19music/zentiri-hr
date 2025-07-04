@@ -262,6 +262,104 @@ const getScoreColor = (score: number) => {
   return "text-red-600"
 }
 
+// AI Skill Gap Analysis data
+const skillGapAnalysis = [
+  {
+    jobId: "job-001",
+    jobTitle: "Senior Software Engineer",
+    requiredSkills: [
+      { skill: "React", importance: "Critical", candidates: 18, qualified: 14 },
+      { skill: "Node.js", importance: "Critical", candidates: 24, qualified: 16 },
+      { skill: "TypeScript", importance: "High", candidates: 15, qualified: 12 },
+      { skill: "AWS", importance: "Medium", candidates: 8, qualified: 4 },
+      { skill: "GraphQL", importance: "Medium", candidates: 6, qualified: 3 }
+    ],
+    candidateMatch: 72,
+    recommendations: [
+      "Consider cross-training current Node.js developers in TypeScript",
+      "Partner with coding bootcamps for AWS certification programs",
+      "Offer GraphQL workshops to interested candidates"
+    ]
+  },
+  {
+    jobId: "job-002",
+    jobTitle: "UX Designer",
+    requiredSkills: [
+      { skill: "Figma", importance: "Critical", candidates: 16, qualified: 14 },
+      { skill: "User Research", importance: "Critical", candidates: 12, qualified: 8 },
+      { skill: "Prototyping", importance: "High", candidates: 14, qualified: 10 },
+      { skill: "Design Systems", importance: "Medium", candidates: 6, qualified: 4 },
+      { skill: "Accessibility", importance: "Medium", candidates: 4, qualified: 2 }
+    ],
+    candidateMatch: 68,
+    recommendations: [
+      "Provide accessibility training for design candidates",
+      "Partner with design schools for user research mentorship",
+      "Create design system documentation for onboarding"
+    ]
+  }
+]
+
+// Social sharing data
+const socialPlatforms = [
+  {
+    platform: "LinkedIn",
+    icon: "💼",
+    connected: true,
+    followers: "12.5K",
+    avgEngagement: "4.2%",
+    jobsPosted: 15,
+    applications: 187,
+    lastPosted: "2 days ago"
+  },
+  {
+    platform: "Twitter",
+    icon: "🐦",
+    connected: true,
+    followers: "8.3K",
+    avgEngagement: "2.8%",
+    jobsPosted: 12,
+    applications: 94,
+    lastPosted: "1 week ago"
+  },
+  {
+    platform: "Facebook",
+    icon: "📘",
+    connected: false,
+    followers: "0",
+    avgEngagement: "0%",
+    jobsPosted: 0,
+    applications: 0,
+    lastPosted: "Never"
+  },
+  {
+    platform: "Instagram",
+    icon: "📷",
+    connected: false,
+    followers: "0",
+    avgEngagement: "0%",
+    jobsPosted: 0,
+    applications: 0,
+    lastPosted: "Never"
+  },
+  {
+    platform: "AngelList",
+    icon: "👼",
+    connected: true,
+    followers: "2.1K",
+    avgEngagement: "8.7%",
+    jobsPosted: 8,
+    applications: 156,
+    lastPosted: "3 days ago"
+  }
+]
+
+const getSkillMatchColor = (percentage: number) => {
+  if (percentage >= 80) return "text-green-600"
+  if (percentage >= 60) return "text-yellow-600"
+  return "text-red-600"
+}
+
 export default function RecruitmentPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -398,6 +496,8 @@ export default function RecruitmentPage() {
           {hasPermission(currentUserRole, "reports.view") && (
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           )}
+          <TabsTrigger value="skill-gap">AI Skill Analysis</TabsTrigger>
+          <TabsTrigger value="social">Social Sharing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="jobs" className="space-y-4">
@@ -739,6 +839,224 @@ export default function RecruitmentPage() {
             </Card>
           </TabsContent>
         )}
+
+        <TabsContent value="skill-gap" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Skill Gap Analysis</CardTitle>
+              <CardDescription>
+                AI-powered analysis of candidate skills vs organizational needs
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {skillGapAnalysis.map((analysis) => (
+                  <div key={analysis.jobId} className="border rounded-lg p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-lg">{analysis.jobTitle}</h3>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-muted-foreground">Match Score:</span>
+                        <span className={`font-bold text-lg ${getSkillMatchColor(analysis.candidateMatch)}`}>
+                          {analysis.candidateMatch}%
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-3">
+                        <h4 className="font-medium">Skills Analysis</h4>
+                        {analysis.requiredSkills.map((skill, idx) => (
+                          <div key={idx} className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="font-medium">{skill.skill}</span>
+                              <div className="flex items-center space-x-2">
+                                <Badge className={skill.importance === 'Critical' ? 'bg-red-100 text-red-800' : 
+                                               skill.importance === 'High' ? 'bg-yellow-100 text-yellow-800' : 
+                                               'bg-green-100 text-green-800'}>
+                                  {skill.importance}
+                                </Badge>
+                                <span className="text-muted-foreground">
+                                  {skill.qualified}/{skill.candidates}
+                                </span>
+                              </div>
+                            </div>
+                            <Progress 
+                              value={(skill.qualified / skill.candidates) * 100} 
+                              className="h-2"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-3">
+                        <h4 className="font-medium">AI Recommendations</h4>
+                        <div className="space-y-2">
+                          {analysis.recommendations.map((rec, idx) => (
+                            <div key={idx} className="flex items-start space-x-2 text-sm">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-muted-foreground">{rec}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <Button variant="outline" className="w-full mt-4">
+                          <Target className="mr-2 h-4 w-4" />
+                          Implement Recommendations
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Card className="bg-blue-50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-blue-100 rounded-lg">
+                      <Award className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold">AI Insights</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Based on current market trends and candidate pool analysis, consider prioritizing 
+                        TypeScript and AWS skills development to improve candidate match rates by 15-20%.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="social" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Social Media Job Sharing</CardTitle>
+              <CardDescription>
+                Mass post job openings across multiple social platforms
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {socialPlatforms.map((platform) => (
+                    <Card key={platform.platform} className={`${platform.connected ? 'border-green-200' : 'border-gray-200'}`}>
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-2xl">{platform.icon}</span>
+                              <div>
+                                <h3 className="font-semibold">{platform.platform}</h3>
+                                <Badge className={platform.connected ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                  {platform.connected ? 'Connected' : 'Not Connected'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+
+                          {platform.connected ? (
+                            <div className="space-y-3">
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <span className="text-muted-foreground">Followers:</span>
+                                  <span className="ml-1 font-medium">{platform.followers}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Engagement:</span>
+                                  <span className="ml-1 font-medium">{platform.avgEngagement}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Jobs Posted:</span>
+                                  <span className="ml-1 font-medium">{platform.jobsPosted}</span>
+                                </div>
+                                <div>
+                                  <span className="text-muted-foreground">Applications:</span>
+                                  <span className="ml-1 font-medium">{platform.applications}</span>
+                                </div>
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Last posted: {platform.lastPosted}
+                              </div>
+                              <Button variant="outline" className="w-full" size="sm">
+                                <Send className="mr-2 h-4 w-4" />
+                                Post Selected Jobs
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <p className="text-sm text-muted-foreground">
+                                Connect your {platform.platform} account to start sharing job postings
+                              </p>
+                              <Button className="w-full" size="sm">
+                                <Plus className="mr-2 h-4 w-4" />
+                                Connect {platform.platform}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Bulk Job Posting</CardTitle>
+                    <CardDescription>Select jobs to post across multiple platforms</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid gap-3">
+                        {jobPostings.filter(job => job.status === 'active').slice(0, 3).map((job) => (
+                          <div key={job.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <input type="checkbox" className="rounded" />
+                              <div>
+                                <h4 className="font-medium">{job.title}</h4>
+                                <p className="text-sm text-muted-foreground">{job.department} • {job.location}</p>
+                              </div>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {job.applications} applications
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t">
+                        <div className="text-sm text-muted-foreground">
+                          3 jobs selected • 3 platforms connected
+                        </div>
+                        <Button>
+                          <Send className="mr-2 h-4 w-4" />
+                          Post to All Platforms
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-yellow-50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-yellow-100 rounded-lg">
+                        <TrendingUp className="h-6 w-6 text-yellow-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold">Social Performance</h3>
+                        <p className="text-sm text-muted-foreground">
+                          LinkedIn posts generate 3x more applications than other platforms. 
+                          Consider focusing your budget on LinkedIn premium job postings.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* Job Details Modal */}
