@@ -41,13 +41,13 @@ interface Plan {
 
 const plans: Plan[] = [
   {
-    id: "free",
-    name: "Free",
+    id: "starter",
+    name: "Starter",
     description: "Perfect for small teams getting started",
     price: 0,
-    period: "forever",
+    period: "free trial",
     icon: <Users className="h-6 w-6" />,
-    employeeLimit: "Up to 50 employees",
+    employeeLimit: "Up to 25 employees",
     features: [
       { name: "Employee database", included: true },
       { name: "Basic leave management", included: true },
@@ -64,17 +64,17 @@ const plans: Plan[] = [
     ]
   },
   {
-    id: "pro",
-    name: "Pro",
+    id: "professional",
+    name: "Professional",
     description: "Ideal for growing companies",
-    price: 5,
-    period: "per employee/month",
+    price: 149.99,
+    period: "per month",
     icon: <Zap className="h-6 w-6" />,
     badge: "Most Popular",
     popular: true,
     employeeLimit: "50-200 employees",
     features: [
-      { name: "Everything in Free", included: true },
+      { name: "Everything in Starter", included: true },
       { name: "Advanced analytics", included: true },
       { name: "Custom workflows", included: true },
       { name: "Performance management", included: true },
@@ -98,13 +98,13 @@ const plans: Plan[] = [
     id: "enterprise",
     name: "Enterprise",
     description: "For large organizations with complex needs",
-    price: 8,
-    period: "per employee/month",
+    price: 299.99,
+    period: "per month",
     icon: <Crown className="h-6 w-6" />,
     badge: "Best Value",
     employeeLimit: "200+ employees",
     features: [
-      { name: "Everything in Pro", included: true },
+      { name: "Everything in Professional", included: true },
       { name: "Advanced security & compliance", included: true },
       { name: "Dedicated account manager", included: true },
       { name: "Custom integrations", included: true },
@@ -156,8 +156,8 @@ export default function PlansOnboarding() {
     try {
       const selectedPlanData = plans.find(p => p.id === selectedPlan)
       
-      if (selectedPlan === 'free') {
-        // For free plan, skip payment and go directly to organization creation
+      if (selectedPlan === 'starter') {
+        // For starter plan (free), skip payment and go directly to organization creation
         await createOrganization()
       } else {
         // For paid plans, initiate Pesapal payment
@@ -171,10 +171,9 @@ export default function PlansOnboarding() {
 
   const initiatePesapalPayment = async (plan: Plan) => {
     try {
-      // Calculate amount based on estimated employees
-      const employeeCount = getEstimatedEmployeeCount(organizationData!.size)
-      const monthlyAmount = plan.price * employeeCount
-      const amount = monthlyAmount * 12 // Annual payment
+      // For paid plans, the price is already the monthly amount
+      const monthlyAmount = plan.price
+      const amount = monthlyAmount * 12 // Annual payment for discount
       
       // Create payment request
       const paymentData = {
@@ -185,7 +184,7 @@ export default function PlansOnboarding() {
         plan: {
           id: plan.id,
           name: plan.name,
-          employeeCount,
+          employeeCount: getEstimatedEmployeeCount(organizationData!.size),
           monthlyPrice: plan.price,
           annualAmount: amount
         },
@@ -199,14 +198,19 @@ export default function PlansOnboarding() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(paymentData),
+        body: JSON.stringify(paymentData)
       })
 
       const result = await response.json()
-      
-      if (result.success) {
-        // Store payment data for later verification
-        localStorage.setItem('paymentData', JSON.stringify(paymentData))
+
+      if (result.success && result.payment_url) {
+        // Store payment info for verification later
+        localStorage.setItem('paymentInfo', JSON.stringify({
+          orderTrackingId: result.order_tracking_id,
+          merchantReference: result.merchant_reference,
+          plan: paymentData.plan,
+          organization: organizationData
+        }))
         
         // Redirect to Pesapal payment page
         window.location.href = result.payment_url
@@ -215,7 +219,7 @@ export default function PlansOnboarding() {
       }
     } catch (error) {
       console.error('Payment initiation error:', error)
-      alert('Failed to initiate payment. Please try again.')
+      alert('Payment initialization failed. Please try again.')
       setIsProcessing(false)
     }
   }
@@ -224,7 +228,6 @@ export default function PlansOnboarding() {
     try {
       const selectedPlanData = plans.find(p => p.id === selectedPlan)
       
-      // Create organization and subdomain
       const response = await fetch('/api/organization/create', {
         method: 'POST',
         headers: {
@@ -235,25 +238,36 @@ export default function PlansOnboarding() {
           plan: {
             id: selectedPlan,
             name: selectedPlanData!.name,
-            price: selectedPlanData!.price
-          }
-        }),
+            employeeCount: getEstimatedEmployeeCount(organizationData!.size),
+            monthlyPrice: selectedPlanData!.price,
+            annualAmount: selectedPlanData!.price * 12
+          },
+          paymentVerified: selectedPlan === 'starter' // Free tier doesn't need payment verification
+        })
       })
 
       const result = await response.json()
-      
+
       if (result.success) {
         // Clear stored data
         localStorage.removeItem('organizationData')
         
-        // Redirect to success page
+        // Store success info
+        localStorage.setItem('onboardingSuccess', JSON.stringify({
+          organization: result.organization,
+          adminUserId: result.admin_user_id,
+          trialEndsAt: result.trial_ends_at,
+          dashboardUrl: result.dashboardUrl
+        }))
+        
+        // Navigate to success page
         router.push('/onboarding/success')
       } else {
         throw new Error(result.error || 'Failed to create organization')
       }
     } catch (error) {
       console.error('Organization creation error:', error)
-      alert('Failed to create organization. Please try again.')
+      alert('Organization creation failed. Please try again.')
       setIsProcessing(false)
     }
   }
@@ -451,7 +465,7 @@ export default function PlansOnboarding() {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                   Processing...
                 </>
-              ) : selectedPlan === 'free' ? (
+              ) : selectedPlan === 'starter' ? (
                 <>
                   Create Free Account
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -464,7 +478,7 @@ export default function PlansOnboarding() {
               )}
             </Button>
             
-            {selectedPlan !== 'free' && (
+            {selectedPlan !== 'starter' && (
               <p className="text-sm text-muted-foreground mt-4">
                 You'll be redirected to our secure payment processor (Pesapal)
               </p>

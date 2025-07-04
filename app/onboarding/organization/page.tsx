@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Building2, Mail, Users, Globe, CheckCircle } from "lucide-react"
+import { ArrowRight, Building2, Mail, Users, Globe, CheckCircle, XCircle } from "lucide-react"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 const organizationSchema = z.object({
@@ -46,12 +46,11 @@ const industries = [
 ]
 
 const companySizes = [
-  { value: "1-10", label: "1-10 employees", plan: "free" },
-  { value: "11-50", label: "11-50 employees", plan: "free" },
-  { value: "51-200", label: "51-200 employees", plan: "pro" },
-  { value: "201-500", label: "201-500 employees", plan: "enterprise" },
-  { value: "501-1000", label: "501-1000 employees", plan: "enterprise" },
-  { value: "1000+", label: "1000+ employees", plan: "enterprise" }
+  { value: "1-10", label: "1-10 employees", plan: "starter" },
+  { value: "11-50", label: "11-50 employees", plan: "starter" },
+  { value: "51-200", label: "51-200 employees", plan: "professional" },
+  { value: "201-500", label: "201-500 employees", plan: "professional" },
+  { value: "500+", label: "500+ employees", plan: "enterprise" }
 ]
 
 export default function OrganizationOnboarding() {
@@ -88,25 +87,42 @@ export default function OrganizationOnboarding() {
   }
 
   // Update subdomain when organization name changes
-  useState(() => {
+  useEffect(() => {
     if (watchedName && !watchedSubdomain) {
       const generated = generateSubdomain(watchedName)
       form.setValue("subdomain", generated)
     }
-  })
+  }, [watchedName, watchedSubdomain, form])
 
   const checkSubdomainAvailability = async (subdomain: string) => {
-    if (!subdomain || subdomain.length < 3) return
+    if (!subdomain || subdomain.length < 3) {
+      setSubdomainAvailable(null)
+      return
+    }
     
     setCheckingSubdomain(true)
     try {
       const response = await fetch(`/api/subdomain/check?subdomain=${encodeURIComponent(subdomain)}`)
+      
+      // Check if response is ok
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned non-JSON response")
+      }
+      
       const result = await response.json()
       
       if (result.success) {
         setSubdomainAvailable(result.available)
         if (!result.available && result.error) {
           form.setError("subdomain", { message: result.error })
+        } else if (result.available) {
+          form.clearErrors("subdomain")
         }
       } else {
         setSubdomainAvailable(false)
@@ -115,26 +131,35 @@ export default function OrganizationOnboarding() {
     } catch (error) {
       console.error("Error checking subdomain:", error)
       setSubdomainAvailable(false)
-      form.setError("subdomain", { message: "Failed to check subdomain availability" })
+      const errorMessage = error instanceof Error ? error.message : "Failed to check subdomain availability"
+      form.setError("subdomain", { message: errorMessage })
     } finally {
       setCheckingSubdomain(false)
     }
   }
 
-  // Check subdomain availability when it changes
-  useState(() => {
+  // Check subdomain availability when it changes with improved debouncing
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (watchedSubdomain && watchedSubdomain.length >= 3) {
         checkSubdomainAvailability(watchedSubdomain)
+      } else {
+        setSubdomainAvailable(null)
+        setCheckingSubdomain(false)
       }
-    }, 500)
+    }, 300) // Reduced debounce time for better UX
 
     return () => clearTimeout(timeoutId)
-  })
+  }, [watchedSubdomain])
 
   const onSubmit = async (data: OrganizationForm) => {
-    if (subdomainAvailable) {
+    if (subdomainAvailable === false) {
       form.setError("subdomain", { message: "Please choose an available subdomain" })
+      return
+    }
+
+    if (subdomainAvailable === null) {
+      form.setError("subdomain", { message: "Please wait for subdomain availability check" })
       return
     }
 
@@ -143,7 +168,7 @@ export default function OrganizationOnboarding() {
       // Store organization data in localStorage for the next step
       const organizationData = {
         ...data,
-        recommendedPlan: companySizes.find(size => size.value === data.size)?.plan || "free"
+        recommendedPlan: companySizes.find(size => size.value === data.size)?.plan || "starter"
       }
       localStorage.setItem('organizationData', JSON.stringify(organizationData))
       
@@ -323,16 +348,13 @@ export default function OrganizationOnboarding() {
                             <CheckCircle className="h-4 w-4 text-green-500" />
                           )}
                           {subdomainAvailable === false && (
-                            <div className="text-red-500 text-sm">✗</div>
+                            <XCircle className="h-4 w-4 text-red-500" />
                           )}
                         </div>
                       </FormControl>
                       <FormDescription>
                         This will be your organization's unique URL: {watchedSubdomain || 'yourcompany'}.zentiri.app
                       </FormDescription>
-                      {subdomainAvailable === false && (
-                        <p className="text-sm text-red-500">This subdomain is already taken. Please choose another.</p>
-                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -374,7 +396,7 @@ export default function OrganizationOnboarding() {
                             />
                           </FormControl>
                           <FormDescription>
-                            Login credentials will be sent to this email
+                            This will be your login email
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -386,7 +408,7 @@ export default function OrganizationOnboarding() {
                 <Button 
                   type="submit" 
                   className="w-full h-12 text-base font-medium"
-                  disabled={isSubmitting || subdomainAvailable === false}
+                  disabled={isSubmitting || subdomainAvailable === false || checkingSubdomain}
                 >
                   {isSubmitting ? (
                     <>

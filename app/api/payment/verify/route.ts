@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+// Supabase configuration
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 // Pesapal API configuration
 const PESAPAL_CONSUMER_KEY = process.env.PESAPAL_CONSUMER_KEY
@@ -8,38 +14,18 @@ const PESAPAL_PRODUCTION_URL = 'https://pay.pesapal.com/v3/api'
 const PESAPAL_BASE_URL = process.env.NODE_ENV === 'production' ? PESAPAL_PRODUCTION_URL : PESAPAL_SANDBOX_URL
 
 interface PaymentVerificationRequest {
-  paymentId: string
-  paymentData: {
-    amount: number
-    currency: string
-    description: string
-    organization: {
-      name: string
-      subdomain: string
-      adminEmail: string
-      adminName: string
-    }
-    plan: {
-      id: string
-      name: string
-      employeeCount: number
-      monthlyPrice: number
-      annualAmount: number
-    }
-    callback_url: string
-    notification_id: string
-  }
+  orderTrackingId: string
+  merchantReference: string
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { paymentId, paymentData }: PaymentVerificationRequest = await request.json()
+    const { orderTrackingId, merchantReference }: PaymentVerificationRequest = await request.json()
 
-    // Validate required environment variables
-    if (!PESAPAL_CONSUMER_KEY || !PESAPAL_CONSUMER_SECRET) {
+    if (!orderTrackingId) {
       return NextResponse.json(
-        { success: false, error: 'Pesapal configuration missing' },
-        { status: 500 }
+        { success: false, error: 'Order tracking ID is required' },
+        { status: 400 }
       )
     }
 
@@ -52,9 +38,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify payment status with Pesapal
-    const statusResponse = await fetch(
-      `${PESAPAL_BASE_URL}/Transactions/GetTransactionStatus?orderTrackingId=${paymentId}`,
+    // Check payment status with Pesapal
+    const pesapalResponse = await fetch(
+      `${PESAPAL_BASE_URL}/Transactions/GetTransactionStatus?orderTrackingId=${orderTrackingId}`,
       {
         method: 'GET',
         headers: {
@@ -65,42 +51,45 @@ export async function POST(request: NextRequest) {
       }
     )
 
-    const statusResult = await statusResponse.json()
+    const pesapalResult = await pesapalResponse.json()
 
-    if (statusResult.status_code === 1 && statusResult.payment_status_description === 'Completed') {
-      // Payment is successful
-      return NextResponse.json({
-        success: true,
-        verified: true,
-        organization: paymentData.organization,
-        plan: paymentData.plan,
-        paymentDetails: {
-          amount: statusResult.amount,
-          currency: statusResult.currency,
-          paymentMethod: statusResult.payment_method,
-          transactionId: statusResult.confirmation_code
-        }
-      })
-    } else if (statusResult.status_code === 0) {
-      // Payment is pending
+    if (pesapalResult.status !== '200') {
+      return NextResponse.json(
+        { success: false, error: 'Failed to verify payment status' },
+        { status: 400 }
+      )
+    }
+
+    const paymentStatus = pesapalResult.payment_status_description?.toLowerCase()
+    const paymentCompleted = paymentStatus === 'completed' || paymentStatus === 'paid'
+
+    if (!paymentCompleted) {
       return NextResponse.json({
         success: false,
-        error: 'Payment is still pending. Please wait and try again.',
-        pending: true
-      })
-    } else {
-      // Payment failed
-      return NextResponse.json({
-        success: false,
-        error: `Payment failed: ${statusResult.payment_status_description}`,
-        failed: true
+        error: 'Payment not completed',
+        status: paymentStatus,
+        orderTrackingId
       })
     }
+
+    // Payment is verified, update any pending organization creation
+    // This would be used in conjunction with the organization creation flow
+    return NextResponse.json({
+      success: true,
+      verified: true,
+      orderTrackingId,
+      merchantReference,
+      paymentStatus,
+      amount: pesapalResult.amount,
+      currency: pesapalResult.currency,
+      paymentMethod: pesapalResult.payment_method,
+      message: 'Payment verified successfully'
+    })
 
   } catch (error) {
     console.error('Payment verification error:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to verify payment' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     )
   }
@@ -108,6 +97,10 @@ export async function POST(request: NextRequest) {
 
 async function getPesapalAuthToken(): Promise<string | null> {
   try {
+    if (!PESAPAL_CONSUMER_KEY || !PESAPAL_CONSUMER_SECRET) {
+      throw new Error('Pesapal configuration missing')
+    }
+
     const authRequest = {
       consumer_key: PESAPAL_CONSUMER_KEY,
       consumer_secret: PESAPAL_CONSUMER_SECRET

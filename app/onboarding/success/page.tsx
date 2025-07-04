@@ -1,147 +1,191 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Mail, ExternalLink, ArrowRight, Copy, Users, Globe } from "lucide-react"
+import { CheckCircle, Sparkles, ArrowRight, ExternalLink, Copy, Check } from "lucide-react"
 import { toast } from "sonner"
 
-interface OrganizationResult {
-  success: boolean
+interface OnboardingSuccessData {
   organization: {
+    id: string
     name: string
     subdomain: string
     adminEmail: string
     plan: string
   }
-  credentials: {
-    email: string
-    temporaryPassword: string
-  }
+  adminUserId: string
+  trialEndsAt?: string
   dashboardUrl: string
 }
 
 export default function OnboardingSuccess() {
   const router = useRouter()
-  const [result, setResult] = useState<OrganizationResult | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const searchParams = useSearchParams()
+  const [successData, setSuccessData] = useState<OnboardingSuccessData | null>(null)
+  const [paymentVerified, setPaymentVerified] = useState<boolean | null>(null)
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(false)
+  const [copiedUrl, setCopiedUrl] = useState(false)
 
   useEffect(() => {
-    // Get result from localStorage or URL params
-    const storedResult = localStorage.getItem('onboardingResult')
-    
-    if (storedResult) {
-      setResult(JSON.parse(storedResult))
-      setIsLoading(false)
-    } else {
-      // Check URL params for payment callback
-      const urlParams = new URLSearchParams(window.location.search)
-      const paymentId = urlParams.get('payment_id')
-      const status = urlParams.get('status')
+    const initializeSuccess = async () => {
+      // Check if this is a payment callback
+      const orderTrackingId = searchParams?.get('OrderTrackingId')
+      const merchantReference = searchParams?.get('MerchantReference')
       
-      if (paymentId && status === 'success') {
-        // Verify payment and create organization
-        verifyPaymentAndCreateOrganization(paymentId)
+      if (orderTrackingId) {
+        // This is a payment callback, verify payment and create organization
+        await handlePaymentCallback(orderTrackingId, merchantReference)
       } else {
-        // No valid data, redirect to start
-        router.push('/onboarding/organization')
+        // This is a direct success page (free plan), load success data
+        const storedData = localStorage.getItem('onboardingSuccess')
+        if (storedData) {
+          setSuccessData(JSON.parse(storedData))
+        } else {
+          // No success data, redirect to onboarding
+          router.push('/onboarding/organization')
+        }
       }
     }
-  }, [router])
 
-  const verifyPaymentAndCreateOrganization = async (paymentId: string) => {
+    initializeSuccess()
+  }, [searchParams, router])
+
+  const handlePaymentCallback = async (orderTrackingId: string, merchantReference: string | null) => {
+    setIsVerifyingPayment(true)
     try {
-      const paymentData = localStorage.getItem('paymentData')
-      if (!paymentData) {
-        throw new Error('Payment data not found')
-      }
-
-      const response = await fetch('/api/payment/verify', {
+      // Verify payment with backend
+      const verifyResponse = await fetch('/api/payment/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          paymentId,
-          paymentData: JSON.parse(paymentData)
-        }),
+          orderTrackingId,
+          merchantReference
+        })
       })
 
-      const verificationResult = await response.json()
-      
-      if (verificationResult.success) {
-        // Payment verified, create organization
-        const orgResponse = await fetch('/api/organization/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            organization: verificationResult.organization,
-            plan: verificationResult.plan,
-            paymentVerified: true,
-            paymentId
-          }),
-        })
+      const verifyResult = await verifyResponse.json()
 
-        const orgResult = await orgResponse.json()
+      if (verifyResult.success && verifyResult.verified) {
+        setPaymentVerified(true)
         
-        if (orgResult.success) {
-          setResult(orgResult)
-          localStorage.setItem('onboardingResult', JSON.stringify(orgResult))
-          // Clean up temporary data
-          localStorage.removeItem('paymentData')
-          localStorage.removeItem('organizationData')
-        } else {
-          throw new Error(orgResult.error || 'Failed to create organization')
+        // Get stored payment info
+        const paymentInfo = localStorage.getItem('paymentInfo')
+        if (paymentInfo) {
+          const { plan, organization } = JSON.parse(paymentInfo)
+          
+          // Create organization with verified payment
+          const createResponse = await fetch('/api/organization/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              organization,
+              plan,
+              paymentVerified: true,
+              paymentReference: orderTrackingId
+            })
+          })
+
+          const createResult = await createResponse.json()
+
+          if (createResult.success) {
+            // Clear stored data
+            localStorage.removeItem('organizationData')
+            localStorage.removeItem('paymentInfo')
+            
+            // Set success data
+            const successInfo: OnboardingSuccessData = {
+              organization: createResult.organization,
+              adminUserId: createResult.admin_user_id,
+              trialEndsAt: createResult.trial_ends_at,
+              dashboardUrl: createResult.dashboardUrl
+            }
+            
+            setSuccessData(successInfo)
+            localStorage.setItem('onboardingSuccess', JSON.stringify(successInfo))
+          } else {
+            throw new Error(createResult.error || 'Failed to create organization')
+          }
         }
       } else {
-        throw new Error(verificationResult.error || 'Payment verification failed')
+        setPaymentVerified(false)
+        throw new Error('Payment verification failed')
       }
     } catch (error) {
-      console.error('Verification error:', error)
-      toast.error('Failed to verify payment. Please contact support.')
+      console.error('Payment callback error:', error)
+      setPaymentVerified(false)
+      // Could show error message or redirect to plans page
     } finally {
-      setIsLoading(false)
+      setIsVerifyingPayment(false)
     }
   }
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success(`${label} copied to clipboard!`)
+  const copyDashboardUrl = async () => {
+    if (successData?.dashboardUrl) {
+      await navigator.clipboard.writeText(successData.dashboardUrl)
+      setCopiedUrl(true)
+      setTimeout(() => setCopiedUrl(false), 2000)
+    }
   }
 
-  if (isLoading) {
+  const handleContinueToDashboard = () => {
+    if (successData?.dashboardUrl) {
+      window.open(successData.dashboardUrl, '_blank')
+    }
+  }
+
+  // Loading state for payment verification
+  if (isVerifyingPayment) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-lg">Setting up your organization...</p>
-        </div>
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <h3 className="text-lg font-semibold mb-2">Verifying Payment</h3>
+            <p className="text-muted-foreground">Please wait while we verify your payment and set up your organization...</p>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
-  if (!result || !result.success) {
+  // Payment failed state
+  if (paymentVerified === false) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="text-center p-8">
-            <div className="text-red-500 mb-4">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                ✗
-              </div>
+        <Card className="w-full max-w-md">
+          <CardContent className="p-8 text-center">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-red-600 text-xl">✗</span>
             </div>
-            <h2 className="text-xl font-semibold mb-2">Setup Failed</h2>
-            <p className="text-muted-foreground mb-6">
-              We encountered an issue setting up your organization. Please try again or contact support.
-            </p>
-            <Button onClick={() => router.push('/onboarding/organization')}>
-              Try Again
-            </Button>
+            <h3 className="text-lg font-semibold mb-2">Payment Verification Failed</h3>
+            <p className="text-muted-foreground mb-6">We couldn't verify your payment. Please try again or contact support.</p>
+            <div className="space-y-2">
+              <Button onClick={() => router.push('/onboarding/plans')} className="w-full">
+                Try Again
+              </Button>
+              <Button variant="ghost" onClick={() => router.push('/')} className="w-full">
+                Back to Home
+              </Button>
+            </div>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
+
+  if (!successData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
       </div>
     )
   }
@@ -166,18 +210,14 @@ export default function OnboardingSuccess() {
         </div>
       </header>
 
-      <main className="container max-w-4xl mx-auto px-4 py-12">
-        {/* Success Hero */}
-        <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="h-10 w-10 text-green-600" />
+      <main className="container max-w-4xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+            <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Welcome to Zentiri HR!</h1>
-          <p className="text-xl text-muted-foreground mb-2">
-            Your organization <span className="font-semibold text-foreground">{result.organization.name}</span> has been successfully set up.
-          </p>
+          <h1 className="text-3xl font-bold mb-2">Welcome to Zentiri HR!</h1>
           <p className="text-lg text-muted-foreground">
-            You're now ready to transform your HR operations.
+            Your organization has been successfully set up
           </p>
         </div>
 
@@ -185,176 +225,107 @@ export default function OnboardingSuccess() {
           {/* Organization Details */}
           <Card>
             <CardHeader>
-              <div className="flex items-center space-x-2">
-                <Globe className="h-5 w-5 text-primary" />
-                <CardTitle>Organization Details</CardTitle>
-              </div>
-              <CardDescription>
-                Your organization is now live and accessible
-              </CardDescription>
+              <CardTitle className="flex items-center">
+                <Sparkles className="h-5 w-5 mr-2 text-primary" />
+                Organization Details
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Organization</p>
-                    <p className="font-medium">{result.organization.name}</p>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Your URL</p>
-                    <p className="font-medium text-primary">{result.organization.subdomain}.zentiri.app</p>
-                  </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Organization Name</label>
+                <p className="text-lg font-semibold">{successData.organization.name}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Plan</label>
+                <p className="text-lg font-semibold capitalize">{successData.organization.plan}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Admin Email</label>
+                <p className="text-lg">{successData.organization.adminEmail}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Dashboard URL</label>
+                <div className="flex items-center space-x-2">
+                  <p className="text-sm bg-muted p-2 rounded flex-1 font-mono">
+                    {successData.dashboardUrl}
+                  </p>
                   <Button
-                    size="sm"
                     variant="outline"
-                    onClick={() => copyToClipboard(`${result.organization.subdomain}.zentiri.app`, 'URL')}
+                    size="sm"
+                    onClick={copyDashboardUrl}
+                    className="shrink-0"
                   >
-                    <Copy className="h-4 w-4" />
+                    {copiedUrl ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Plan</p>
-                    <p className="font-medium capitalize">{result.organization.plan}</p>
-                  </div>
-                  <Badge variant="secondary">{result.organization.plan}</Badge>
-                </div>
               </div>
-
-              <Button 
-                className="w-full mt-6"
-                onClick={() => window.open(result.dashboardUrl, '_blank')}
-              >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Access Your Dashboard
-              </Button>
+              {successData.trialEndsAt && (
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Trial Ends</label>
+                  <p className="text-lg">{new Date(successData.trialEndsAt).toLocaleDateString()}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Login Credentials */}
+          {/* Next Steps */}
           <Card>
             <CardHeader>
-              <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5 text-primary" />
-                <CardTitle>Admin Access</CardTitle>
-              </div>
-              <CardDescription>
-                Your administrator login credentials
-              </CardDescription>
+              <CardTitle>Next Steps</CardTitle>
+              <CardDescription>Get started with your HR management platform</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium">{result.credentials.email}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => copyToClipboard(result.credentials.email, 'Email')}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Temporary Password</p>
-                    <p className="font-mono text-sm bg-background p-2 rounded border">
-                      {result.credentials.temporaryPassword}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => copyToClipboard(result.credentials.temporaryPassword, 'Password')}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start space-x-2">
-                  <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">1</div>
                   <div>
-                    <p className="text-sm font-medium text-blue-900">Credentials Sent</p>
-                    <p className="text-sm text-blue-700">
-                      We've also sent these credentials to {result.organization.adminEmail}
-                    </p>
+                    <p className="font-medium">Access Your Dashboard</p>
+                    <p className="text-sm text-muted-foreground">Log in to start setting up your organization</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">2</div>
+                  <div>
+                    <p className="font-medium">Complete Your Profile</p>
+                    <p className="text-sm text-muted-foreground">Add your company information and preferences</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">3</div>
+                  <div>
+                    <p className="font-medium">Invite Your Team</p>
+                    <p className="text-sm text-muted-foreground">Start adding employees and set up departments</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">4</div>
+                  <div>
+                    <p className="font-medium">Configure HR Workflows</p>
+                    <p className="text-sm text-muted-foreground">Set up leave policies, payroll, and other HR processes</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <p className="text-sm text-amber-800">
-                  <strong>Important:</strong> Please change your password after your first login for security.
-                </p>
+              <div className="pt-4 space-y-3">
+                <Button onClick={handleContinueToDashboard} className="w-full" size="lg">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Open Dashboard
+                </Button>
+                <Button variant="outline" onClick={() => router.push('/')} className="w-full">
+                  Back to Home
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Next Steps */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Next Steps</CardTitle>
-            <CardDescription>Get started with these recommended actions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <span className="text-lg font-bold text-primary">1</span>
-                </div>
-                <h3 className="font-semibold mb-2">Login & Setup</h3>
-                <p className="text-sm text-muted-foreground">
-                  Access your dashboard and complete your profile setup
-                </p>
-              </div>
-
-              <div className="text-center p-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <span className="text-lg font-bold text-primary">2</span>
-                </div>
-                <h3 className="font-semibold mb-2">Add Employees</h3>
-                <p className="text-sm text-muted-foreground">
-                  Import or manually add your team members to the system
-                </p>
-              </div>
-
-              <div className="text-center p-4">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                  <span className="text-lg font-bold text-primary">3</span>
-                </div>
-                <h3 className="font-semibold mb-2">Configure Policies</h3>
-                <p className="text-sm text-muted-foreground">
-                  Set up leave policies, workflows, and organizational structure
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Support */}
+        {/* Success Message */}
         <div className="text-center mt-12">
-          <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
-          <p className="text-muted-foreground mb-4">
-            Our team is here to help you get the most out of Zentiri HR
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Button variant="outline">
-              <Mail className="mr-2 h-4 w-4" />
-              Contact Support
-            </Button>
-            <Button variant="outline">
-              View Documentation
-            </Button>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Congratulations!</h3>
+            <p className="text-green-700">
+              Your Zentiri HR organization is ready to use. We're excited to help you transform your HR operations!
+            </p>
           </div>
         </div>
       </main>

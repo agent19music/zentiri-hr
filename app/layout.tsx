@@ -18,7 +18,14 @@ export const metadata: Metadata = {
   title: "Zentiri HR - Transform Your HR Operations",
   description:
     "Streamline hiring, enhance employee experience, and drive organizational growth with our comprehensive HR management platform",
-    generator: 'v0.dev'
+  icons: {
+    icon: [
+      { url: '/zentiri-logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/zentiri-logo.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/zentiri-logo.png',
+  },
+  generator: 'v0.dev'
 }
 
 export function generateViewport() {
