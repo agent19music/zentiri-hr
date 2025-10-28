@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
 // Email service configuration (you can use SendGrid, Resend, or any email service)
 const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@zentiri.app'
 const EMAIL_API_KEY = process.env.EMAIL_API_KEY
@@ -33,6 +28,19 @@ interface OrganizationCreateRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Supabase configuration
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return NextResponse.json(
+        { success: false, error: 'Server configuration error' },
+        { status: 500 }
+      )
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
     const data: OrganizationCreateRequest = await request.json()
     const { organization, plan, paymentVerified = false, paymentReference } = data
 
