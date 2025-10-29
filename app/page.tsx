@@ -12,9 +12,9 @@ import { ZentiriFooter } from "@/components/landing/footer"
 
 export default function ZentiriHRLanding() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-background text-foreground">
       <ZentiriHeader />
-      <main className="mb-32">
+      <main className="mx-auto mb-32 w-full">
         <ZentiriHero />
         <ZentiriLogos />
         <ZentiriProblem />

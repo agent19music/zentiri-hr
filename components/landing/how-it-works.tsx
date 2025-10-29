@@ -37,9 +37,9 @@ const steps = [
 
 export function ZentiriHowItWorks() {
   return (
-    <section className="border-t border-border/50 bg-background py-24">
-      <div className="container px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center">
+    <section className="w-full border-t border-border/50 bg-background py-24">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-3xl px-4 text-center sm:px-6 md:px-0">
           <p className="text-sm font-medium text-primary">How Zentiri partners with you</p>
           <h2 className="mt-4 text-3xl leading-tight sm:text-4xl">A guided rollout made for hybrid teams</h2>
           <p className="mt-4 text-base text-muted-foreground">
@@ -47,7 +47,7 @@ export function ZentiriHowItWorks() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:grid-cols-4">
+        <div className="mx-auto mt-14 grid w-full max-w-5xl gap-6 px-4 sm:px-6 md:px-0 lg:grid-cols-4">
           {steps.map((step) => (
             <Card key={step.title} className="bg-card shadow-sm border-0">
               <CardContent className="space-y-4 p-6">

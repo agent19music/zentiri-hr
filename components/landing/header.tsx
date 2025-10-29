@@ -25,8 +25,8 @@ export function ZentiriHeader() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur  bg-background/70">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+    <header className="sticky top-0 z-50 w-full backdrop-blur bg-background/70">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         <Link href="/" className="flex items-center space-x-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Image src="/zentiri-logo.png" alt="Zentiri HR" width={40} height={40} />
@@ -68,11 +68,11 @@ export function ZentiriHeader() {
 
       <div
         className={cn(
-          "md:hidden transition-all duration-300 overflow-hidden border-t border-border/40 bg-background/95 backdrop-blur",
+          "md:hidden w-full transition-all duration-300 overflow-hidden border-t border-border/40 bg-background/95 backdrop-blur",
           open ? "max-h-96" : "max-h-0"
         )}
       >
-        <div className="container px-4 py-4 space-y-4">
+        <div className="container mx-auto px-4 py-4 space-y-4 md:px-6 lg:px-8">
           <nav className="flex flex-col space-y-3 text-sm text-muted-foreground">
             {navigation.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="hover:text-foreground">

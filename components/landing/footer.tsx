@@ -41,7 +41,7 @@ const socialLinks = [
 
 export function ZentiriFooter() {
   return (
-    <footer className="relative mt-32 md:mt-40 border-t border-border/40 bg-primary text-primary-foreground">
+    <footer className="relative mt-32 md:mt-40 w-full border-t border-border/40 bg-primary text-primary-foreground">
       {/* SVG Mask for interesting footer shape */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-full">
         <svg 
@@ -57,8 +57,8 @@ export function ZentiriFooter() {
           />
         </svg>
       </div>
-      <div className="container px-4 py-24 md:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-20">
+      <div className="container mx-auto px-4 py-24 md:px-6 lg:px-8">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-20 px-4 sm:px-6 md:px-0">
           <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
             <div className="space-y-6 md:max-w-2xl">
               <p className="text-xs uppercase tracking-[0.4em] text-primary-foreground/60">

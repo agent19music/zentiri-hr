@@ -45,9 +45,9 @@ const features = [
 
 export function ZentiriFeatures() {
   return (
-    <section className="bg-background py-24">
-      <div className="container px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center">
+    <section className="w-full bg-background py-24">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-3xl px-4 text-center sm:px-6 md:px-0">
           <p className="text-sm font-medium text-primary">Platform capabilities</p>
           <h2 className="mt-4 text-3xl leading-tight sm:text-4xl">Everything you need to orchestrate people operations</h2>
           <p className="mt-4 text-base text-muted-foreground">
@@ -55,7 +55,7 @@ export function ZentiriFeatures() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto mt-14 grid w-full max-w-5xl gap-6 px-4 sm:px-6 md:grid-cols-2 md:px-0 lg:grid-cols-3">
           {features.map((feature) => (
             <Card key={feature.title} className="bg-card shadow-sm border-0 transition-colors">
               <CardContent className="space-y-4 p-6">

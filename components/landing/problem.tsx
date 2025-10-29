@@ -48,9 +48,9 @@ const employeeFocus = [
 
 export function ZentiriProblem() {
   return (
-    <section className="bg-background py-24" id="teams">
-      <div className="container px-4 md:px-6">
-        <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2 lg:items-start">
+    <section className="w-full bg-background py-24" id="teams">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <div className="mx-auto grid w-full max-w-5xl gap-12 px-4 sm:px-6 md:px-0 lg:grid-cols-2 lg:items-start">
           <div>
             <p className="text-sm font-medium text-primary">Built for every side of the HR table</p>
             <h2 className="mt-4 text-3xl leading-tight sm:text-4xl">
