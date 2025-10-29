@@ -26,7 +26,7 @@ const testimonials = [
 
 export function ZentiriTestimonials() {
   return (
-    <section className="bg-muted py-24">
+    <section className="bg-background py-24">
       <div className="container px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-medium text-primary">Voice of the teams we serve</p>
@@ -35,7 +35,7 @@ export function ZentiriTestimonials() {
 
         <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-3">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.name} className="bg-card shadow-sm">
+            <Card key={testimonial.name} className="bg-card shadow-sm border-0">
               <CardContent className="space-y-4 p-6">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[hsl(189,95%,92%)] text-[hsl(189,95%,40%)]">

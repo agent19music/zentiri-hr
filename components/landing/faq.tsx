@@ -30,7 +30,7 @@ const faqs = [
 
 export function ZentiriFAQ() {
   return (
-    <section className="bg-secondary/30 py-24" id="faq">
+    <section className="bg-background py-24" id="faq">
       <div className="container px-4 md:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-medium text-primary">FAQ</p>

@@ -39,7 +39,7 @@ export function ZentiriHero() {
       <div className="container px-4 pb-24 pt-24 md:px-6">
         <div className="mx-auto flex min-h-[80vh] max-w-5xl flex-col items-center justify-center text-center">
          
-          <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold leading-tight text-hero-text sm:text-5xl lg:text-6xl">
             Build <span className="italic text-[hsl(189,95%,43%)]">people-first</span> organizations with Zentiri HR
           </h1>
           <p className="mt-6 max-w-3xl text-lg text-muted-foreground sm:text-xl">
@@ -87,14 +87,14 @@ export function ZentiriHero() {
           {highlights.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl border border-border bg-card p-6 text-left shadow-sm transition-colors hover:border-primary/40"
+              className="rounded-2xl bg-card p-6 text-left shadow-sm transition-colors border-0"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(189,95%,92%)] text-[hsl(189,95%,43%)]">
-                <item.icon size={24} weight="duotone" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl text">
+                <item.icon size={24}  />
               </div>
               <h3 className="mt-6 text-xl font-semibold text-foreground">{item.title}</h3>
               <p className="mt-3 text-sm text-muted-foreground">{item.description}</p>
-              <span className="mt-6 inline-flex items-center text-sm font-medium text-[hsl(189,95%,43%)]">
+              <span className="mt-6 inline-flex items-center text-sm font-medium text">
                 {item.metric}
               </span>
             </div>

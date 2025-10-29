@@ -48,7 +48,7 @@ const employeeFocus = [
 
 export function ZentiriProblem() {
   return (
-    <section className="bg-muted py-24" id="teams">
+    <section className="bg-background py-24" id="teams">
       <div className="container px-4 md:px-6">
         <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2 lg:items-start">
           <div>
@@ -62,7 +62,7 @@ export function ZentiriProblem() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2" id="workflows">
-            <Card className="border border-border bg-card shadow-sm">
+            <Card className="bg-card shadow-sm border-0">
               <CardContent className="space-y-4 p-6">
                 <div className="flex items-center gap-3">
                   <span className="rounded-full bg-primary/10 p-2 text-primary">
@@ -73,8 +73,8 @@ export function ZentiriProblem() {
                 <div className="space-y-4">
                   {employerFocus.map((item) => (
                     <div key={item.title} className="flex gap-3">
-                      <div className="rounded-lg bg-secondary p-2 text-primary">
-                        <item.icon size={18} weight="duotone" />
+                      <div className="rounded-lg bg-background p-2 text-primary">
+                        <item.icon size={18}  />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{item.title}</p>
@@ -86,10 +86,10 @@ export function ZentiriProblem() {
               </CardContent>
             </Card>
 
-            <Card className="border border-border bg-card shadow-sm">
+            <Card className="bg-card shadow-sm border-0">
               <CardContent className="space-y-4 p-6">
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-accent/15 p-2 text-accent">
+                  <span className="rounded-full bg-[hsl(189,95%,43%)]/15 p-2 text-[hsl(189,95%,43%)]">
                     <ChatsCircle size={20} weight="fill" />
                   </span>
                   <h3 className="text-lg font-semibold">Employee hub</h3>
@@ -97,8 +97,8 @@ export function ZentiriProblem() {
                 <div className="space-y-4">
                   {employeeFocus.map((item) => (
                     <div key={item.title} className="flex gap-3">
-                      <div className="rounded-lg bg-secondary p-2 text-accent">
-                        <item.icon size={18} weight="duotone" />
+                      <div className="rounded-lg bg-background p-2 text-[hsl(189,95%,43%)] ">
+                        <item.icon size={18} />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{item.title}</p>

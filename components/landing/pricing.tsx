@@ -55,7 +55,7 @@ const plans = [
 
 export function ZentiriPricing() {
   return (
-    <section className="bg-muted py-24" id="pricing">
+    <section className="bg-background py-24" id="pricing">
       <div className="container px-4 md:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-medium text-primary">Pricing</p>
@@ -69,7 +69,7 @@ export function ZentiriPricing() {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={plan.highlighted ? "border-primary shadow-sm" : "border-border shadow-sm"}
+              className={plan.highlighted ? "shadow-sm border-0" : "shadow-sm border-0"}
             >
               {plan.highlighted && (
                 <div className="rounded-t-xl bg-primary px-4 py-2 text-center text-xs font-semibold text-primary-foreground">

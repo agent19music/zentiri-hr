@@ -9,7 +9,7 @@ const partners = [
 
 export function ZentiriLogos() {
   return (
-    <section className="border-y border-border/50 bg-muted">
+    <section className="border-y border-border/50 bg-background">
       <div className="container px-4 py-12 md:px-6">
         <div className="mx-auto max-w-5xl text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">

@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export function ZentiriCTA() {
   return (
-    <section className=" ">
+    <section className="bg-background">
       <div className="container px-4 py-20 md:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl leading-tight sm:text-4xl">Ready to harmonise your people operations?</h2>
